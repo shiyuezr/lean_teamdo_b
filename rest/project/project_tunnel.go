@@ -2,7 +2,6 @@ package project
 
 import (
 	"github.com/kfchen81/beego/vanilla"
-	b_project "lean_teamdo_b/business/project"
 )
 
 type ProjectTunnel struct {
@@ -27,13 +26,6 @@ func (this *ProjectTunnel) Get()  {
 }
 
 func (this *ProjectTunnel) Put()  {
-	bCtx := this.GetBusinessContext()
-
-	projectId, _ :=this.GetInt("project_id")
-	title := this.GetString("title")
-	managerId, _ := this.GetInt("manager_id")
-
-	b_project.NewProjectTunnelFactory(bCtx).CreateProjectTunnel(projectId, managerId, title)
 
 }
 

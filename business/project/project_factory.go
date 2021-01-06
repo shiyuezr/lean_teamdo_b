@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/kfchen81/beego"
 	"github.com/kfchen81/beego/vanilla"
-	m_project "lean_teamdo_b/models/project"
+	m_project "teamdo/models/project"
 )
 
 type ProjectFactory struct {

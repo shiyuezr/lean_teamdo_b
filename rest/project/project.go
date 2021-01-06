@@ -2,7 +2,7 @@ package project
 
 import (
 	"github.com/kfchen81/beego/vanilla"
-	b_project "lean_teamdo_b/business/project"
+	b_project "teamdo/business/project"
 )
 
 type Project struct {

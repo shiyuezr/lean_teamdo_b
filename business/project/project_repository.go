@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/kfchen81/beego"
 	"github.com/kfchen81/beego/vanilla"
-	m_project "lean_teamdo_b/models/project"
+	m_project "teamdo/models/project"
 )
 
 type ProjectRepository struct {
@@ -14,6 +14,27 @@ type ProjectRepository struct {
 func (this *ProjectRepository) GetProjectByUserId(userId int) []*Project {
 	filters := vanilla.Map{
 		"user_id": userId,
+	}
+	var models []*m_project.ProjectHasUser
+	o := vanilla.GetOrmFromContext(this.Ctx)
+	_, err := o.QueryTable(&m_project.ProjectHasUser{}).Filter(filters).All(&models)
+	if err != nil {
+		beego.Error(err)
+		return nil
+	}
+
+	ids := make([]int, 0)
+	for _, model := range models {
+		ids = append(ids, model.ProjectId)
+	}
+
+	projects := this.GetProjectByIds(ids)
+	return projects
+}
+
+func (this *ProjectRepository) GetProjectByIds(ids []int) []*Project {
+	filters := vanilla.Map{
+		"id__in": ids,
 	}
 	projects := this.GetProject(filters)
 	if len(projects) == 0 {

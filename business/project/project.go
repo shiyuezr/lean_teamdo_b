@@ -3,8 +3,8 @@ package project
 import (
 	"context"
 	"github.com/kfchen81/beego/vanilla"
-	"lean_teamdo_b/business/user"
-	m_project "lean_teamdo_b/models/project"
+	"teamdo/business/user"
+	m_project "teamdo/models/project"
 	"time"
 )
 

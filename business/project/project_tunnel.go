@@ -1,7 +1,6 @@
 package project
 
 import (
-	"context"
 	"github.com/kfchen81/beego/vanilla"
 	"time"
 )
@@ -15,8 +14,4 @@ type Tunnel struct {
 	CreateAt    time.Time
 
 	Task        []*Task
-}
-
-func NewProjectTunnelForModel(ctx context.Context)  {
-
 }
