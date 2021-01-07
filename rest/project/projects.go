@@ -23,7 +23,7 @@ func (this *Projects) Get()  {
 	bCtx := this.GetBusinessContext()
 	userId, _ := this.GetInt("user_id")
 
-	projects := b_project.NewProjectRepository(bCtx).GetProjectByUserId(userId)
+	projects := b_project.NewProjectRepository(bCtx).GetProjectsByUserId(userId)
 	data := b_project.NewEncodeProjectService(bCtx).EncodeMany(projects)
 	response := vanilla.MakeResponse(data)
 	this.ReturnJSON(response)

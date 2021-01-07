@@ -15,7 +15,6 @@ func (this *Project) Resource() string {
 
 func (this *Project) GetParameters() map[string][]string {
 	return map[string][]string{
-		"GET": []string{"user_id: int"},
 		"PUT": []string{
 			"user_id: int",
 			"project_name: string",
@@ -23,9 +22,6 @@ func (this *Project) GetParameters() map[string][]string {
 	}
 }
 
-func (this *Project) Get()  {
-
-}
 
 func (this *Project) Put()  {
 	bCtx := this.GetBusinessContext()
