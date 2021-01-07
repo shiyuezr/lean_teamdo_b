@@ -6,10 +6,12 @@ import (
 )
 
 type Project struct {
-	Id    int
-	Name  string
+	Id    		int
+	Name  		string
 
 	ManagerId	int
+	CreateAt	time.Time	`orm:"auto_now_add;type(datetime)"`
+	UpdatedAt	time.Time	`orm:"auto_now;type(datetime)"`
 }
 
 func (self *Project) TableName() string {
@@ -17,13 +19,14 @@ func (self *Project) TableName() string {
 }
 
 type Tunnel struct {
-	Id     int
-	Title  string
+	Id     		int
+	Title  		string
 	ProjectId	int
 	ManagerId	int
 
-	IsDeleted  bool `orm:"default(false)"`
-	CreatedAt time.Time `orm:"auto_now_add;type(datetime)"`
+	IsDeleted  	bool 	`orm:"default(false)"`
+	CreatedAt 	time.Time 	`orm:"auto_now_add;type(datetime)"`
+	UpdatedAt  	time.Time	`orm:"auto_now;type(datetime)"`
 }
 
 func (self *Tunnel) TableName() string {
@@ -31,8 +34,8 @@ func (self *Tunnel) TableName() string {
 }
 
 type Task struct {
-	Id     int
-	Title     string
+	Id     		int
+	Title     	string
 	TunnelId	string
 	ExecutorId	int		`orm:"default(0)"`
 
@@ -44,6 +47,7 @@ type Task struct {
 	StartDate	time.Time
 	EndDate		time.Time
 	CreatedAt	time.Time 	`orm:"auto_now_add;type(datetime)"`
+	UpdatedAt 	time.Time	`orm:"auto_now;type(datetime)"`
 }
 
 func (self *Task) TableName() string {
@@ -51,13 +55,14 @@ func (self *Task) TableName() string {
 }
 
 // project_has_user
-type ProjectHasUser struct {
+type ProjectHasMember struct {
 	Id  		int
 	ProjectId	int
 	UserId 		int
+	UpdatedAt	time.Time	`orm:"auto_now;type(datetime)"`
 }
 
-func (self *ProjectHasUser) TableName() string {
+func (self *ProjectHasMember) TableName() string {
 	return "project_has_user"
 }
 
@@ -65,5 +70,5 @@ func init()  {
 	orm.RegisterModel(new(Project))
 	orm.RegisterModel(new(Task))
 	orm.RegisterModel(new(Tunnel))
-	orm.RegisterModel(new(ProjectHasUser))
+	orm.RegisterModel(new(ProjectHasMember))
 }

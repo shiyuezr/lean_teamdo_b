@@ -29,6 +29,15 @@ func (self *Executor) TableName() string {
 	return "user_manager"
 }
 
+type Member struct {
+	Id 			int
+	UserName	string
+}
+
+func (self *Member) TableName() string {
+	return "user_member"
+}
+
 func init()  {
 	orm.RegisterModel(new(User))
 	orm.RegisterModel(new(Manager))

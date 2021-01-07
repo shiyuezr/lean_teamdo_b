@@ -42,9 +42,9 @@ func (this *ProjectRepository) GetProjectsByUserId(userId int) []*Project {
 	filters := vanilla.Map{
 		"user_id": userId,
 	}
-	var models []*m_project.ProjectHasUser
+	var models []*m_project.ProjectHasMember
 	o := vanilla.GetOrmFromContext(this.Ctx)
-	_, err := o.QueryTable(&m_project.ProjectHasUser{}).Filter(filters).All(&models)
+	_, err := o.QueryTable(&m_project.ProjectHasMember{}).Filter(filters).All(&models)
 	if err != nil {
 		beego.Error(err)
 		return nil
