@@ -35,6 +35,46 @@ func (this *ProjectMemberService) UpdateProjectToMember(projectId, userId int)  
 	}
 }
 
+func (this *ProjectMemberService) GetMemberIdsByProjectId(projectId int) []int {
+	filters := vanilla.Map{
+		"project_id": projectId,
+	}
+	var models []m_project.ProjectHasMember
+	o := vanilla.GetOrmFromContext(this.Ctx)
+	_, err := o.QueryTable(m_project.ProjectHasMember{}).Filter(filters).All(&models)
+
+	if err != nil {
+		beego.Error(err)
+		return nil
+	}
+
+	memberIds := make([]int, 0)
+	for _, model := range models {
+		memberIds = append(memberIds, model.Id)
+	}
+
+	return memberIds
+}
+
+func (this *ProjectMemberService) GetProjectIdsByUserId(userId int) []int {
+	filters := vanilla.Map{
+		"user_id": userId,
+	}
+	var models []*m_project.ProjectHasMember
+	o := vanilla.GetOrmFromContext(this.Ctx)
+	_, err := o.QueryTable(&m_project.ProjectHasMember{}).Filter(filters).All(&models)
+	if err != nil {
+		beego.Error(err)
+		return nil
+	}
+
+	projectIds := make([]int, 0)
+	for _, model := range models {
+		projectIds = append(projectIds, model.ProjectId)
+	}
+	return projectIds
+}
+
 func NewProjectMemberService(ctx context.Context) *ProjectMemberService {
 	instance := new(ProjectMemberService)
 	instance.Ctx = ctx

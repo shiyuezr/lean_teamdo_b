@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/kfchen81/beego"
 	"github.com/kfchen81/beego/vanilla"
+	b_project "teamdo/business/project"
 	m_user "teamdo/models/user"
 )
 
@@ -18,19 +19,10 @@ func NewMemberRepository(ctx context.Context) *Member {
 }
 
 func (this *Member) GetMembersByProjectId(projectId int) []*ProjectMember {
-	filters := vanilla.Map{
-		"project_id": projectId,
-	}
-	var models []*m_user.Member
-	o := vanilla.GetOrmFromContext(this.Ctx)
-	_, err := o.QueryTable(&m_user.Member{}).Filter(filters).All(&models)
-	if err != nil {
-		beego.Error(err)
+
+	memberIds := b_project.NewProjectMemberService(this.Ctx).GetMemberIdsByProjectId(projectId)
+	if len(memberIds) == 0 {
 		return nil
-	}
-	memberIds := make([]int, 0)
-	for _, model := range models {
-		memberIds = append(memberIds, model.Id)
 	}
 
 	members := this.GetMembersByIds(memberIds)

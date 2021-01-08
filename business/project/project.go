@@ -21,6 +21,22 @@ type Project struct {
 	Tunnel			[]*Tunnel
 }
 
+func NewProject(ctx context.Context, userId int, projectName string) *Project {
+	o := vanilla.GetOrmFromContext(ctx)
+
+	model := m_project.Project{}
+	model.ManagerId = userId
+	model.Name = projectName
+
+	id, err := o.Insert(&model)
+	if err != nil {
+		beego.Error(err)
+		panic(vanilla.NewBusinessError("create_project_fail", fmt.Sprintf("创建项目失败")))
+	}
+	model.Id = int(id)
+	return NewProjectForModel(ctx, &model)
+}
+
 
 func NewProjectForModel(ctx context.Context, dbModel *m_project.Project) *Project {
 	instance := new(Project)
@@ -29,19 +45,4 @@ func NewProjectForModel(ctx context.Context, dbModel *m_project.Project) *Projec
 	instance.Name = dbModel.Name
 	instance.ManagerId = dbModel.ManagerId
 	return instance
-}
-
-func CreateProject(ctx context.Context, userId int, projectName string) *Project {
-	o := vanilla.GetOrmFromContext(ctx)
-
-	model := m_project.Project{}
-	model.ManagerId = userId
-	model.Name = projectName
-
-	_, err := o.Insert(&model)
-	if err != nil {
-		beego.Error(err)
-		panic(vanilla.NewBusinessError("create_project_fail", fmt.Sprintf("创建项目失败")))
-	}
-	return NewProjectForModel(ctx, &model)
 }

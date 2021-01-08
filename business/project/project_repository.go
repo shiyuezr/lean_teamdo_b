@@ -39,23 +39,14 @@ func (this *ProjectRepository) GetPagedProjects(filters vanilla.Map, page *vanil
 }
 
 func (this *ProjectRepository) GetProjectsByUserId(userId int) []*Project {
-	filters := vanilla.Map{
-		"user_id": userId,
-	}
-	var models []*m_project.ProjectHasMember
-	o := vanilla.GetOrmFromContext(this.Ctx)
-	_, err := o.QueryTable(&m_project.ProjectHasMember{}).Filter(filters).All(&models)
-	if err != nil {
-		beego.Error(err)
+
+	projectIds := NewProjectMemberService(this.Ctx).GetProjectIdsByUserId(userId)
+	if len(projectIds) == 0 {
 		return nil
 	}
 
-	ids := make([]int, 0)
-	for _, model := range models {
-		ids = append(ids, model.ProjectId)
-	}
+	projects := this.GetProjectsByIds(projectIds)
 
-	projects := this.GetProjectsByIds(ids)
 	return projects
 }
 

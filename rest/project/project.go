@@ -28,7 +28,7 @@ func (this *Project) Put()  {
 
 	userId, _ := this.GetInt("user_id")
 	projectName := this.GetString("project_name")
-	b_project.NewProjectFactory(bCtx).CreateProject(userId, projectName)
+	b_project.NewProject(bCtx, userId, projectName)
 
 	response := vanilla.MakeResponse(vanilla.Map{})
 	this.ReturnJSON(response)
