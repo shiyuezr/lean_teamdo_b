@@ -1,4 +1,4 @@
-package user
+package project
 
 import (
 	"github.com/kfchen81/beego/vanilla"
@@ -23,7 +23,7 @@ func (this *Member) Post()  {
 	bCtx := this.GetBusinessContext()
 	projectId, _ := this.GetInt("project_id")
 	userId, _ := this.GetInt("user_id")
-	b_project.NewProjectMemberService(bCtx).UpdateProjectToMember(projectId, userId)
+	b_project.NewProjectMemberService(bCtx).AddMemberToProject(projectId, userId)
 	response := vanilla.MakeResponse(vanilla.Map{})
 	this.ReturnJSON(response)
 }

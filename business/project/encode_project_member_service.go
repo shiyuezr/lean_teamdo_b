@@ -1,8 +1,9 @@
-package user
+package project
 
 import (
 	"context"
 	"github.com/kfchen81/beego/vanilla"
+	"teamdo/business/user"
 )
 
 type EncodeMemberService struct {
@@ -15,18 +16,18 @@ func NewEncodeMemberService(ctx context.Context) *EncodeMemberService {
 	return service
 }
 
-func (this *EncodeMemberService) Encode(member *ProjectMember) *RMember {
+func (this *EncodeMemberService) Encode(member *ProjectMember) *user.RMember {
 	if member == nil {
 		return nil
 	}
 
-	return &RMember{
+	return &user.RMember{
 		Name: member.UserName,
 	}
 }
 
-func (this *EncodeMemberService) EncodeMany(members []*ProjectMember) []*RMember {
-	rDatas := make([]*RMember, 0)
+func (this *EncodeMemberService) EncodeMany(members []*ProjectMember) []*user.RMember {
+	rDatas := make([]*user.RMember, 0)
 	for _, member := range members {
 		rDatas = append(rDatas, this.Encode(member))
 	}

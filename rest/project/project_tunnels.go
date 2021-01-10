@@ -10,7 +10,7 @@ type ProjectTunnels struct {
 }
 
 func (this *ProjectTunnels) Resource() string {
-	return "project.project_tunnels"
+	return "project.tunnels"
 }
 
 func (this *ProjectTunnels) GetParameters() map[string][]string {

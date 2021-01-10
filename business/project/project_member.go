@@ -1,12 +1,13 @@
-package user
+package project
 
 import (
 	"context"
+	"teamdo/business/user"
 	m_user "teamdo/models/user"
 )
 
 type ProjectMember struct {
-	User
+	user.User
 }
 
 func NewProjectMemberForModel(ctx context.Context, dbModel *m_user.Member) *ProjectMember {

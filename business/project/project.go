@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/kfchen81/beego"
 	"github.com/kfchen81/beego/vanilla"
-	"teamdo/business/user"
 	m_project "teamdo/models/project"
 	"time"
 )
@@ -17,7 +16,7 @@ type Project struct {
 	CreateAt		time.Time
 	ManagerId		int
 
-	Members			[]*user.Member
+	Members			[]*Member
 	Tunnel			[]*Tunnel
 }
 

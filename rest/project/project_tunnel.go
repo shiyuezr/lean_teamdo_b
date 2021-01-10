@@ -10,14 +10,14 @@ type ProjectTunnel struct {
 }
 
 func (this *ProjectTunnel) Resource() string {
-	return "project.project_tunnel"
+	return "project.tunnel"
 }
 
 func (this *ProjectTunnel) GetParameters() map[string][]string {
 	return map[string][]string{
-		"PUT": []string{"project_id: int", "title: string"},
-		"POST": []string{"id: int", "title: string"},
-		"DELETE": []string{"id: int"},
+		"PUT": []string{"project_id:int", "title:string", "manager_id:int"},
+		"POST": []string{"project_id:int", "id:int", "title:string", "manager_id:int"},
+		"DELETE": []string{"project_id:int", "id:int", "manager_id:int"},
 	}
 }
 
@@ -26,7 +26,13 @@ func (this *ProjectTunnel) Put()  {
 	bCtx := this.GetBusinessContext()
 
 	projectId, _ := this.GetInt("project_id")
+	managerId, _ := this.GetInt("manager_id")
 	title := this.GetString("title")
+
+	project := b_project.NewProjectRepository(bCtx).GetProjectById(projectId)
+	if project.ManagerId != managerId {
+		panic(vanilla.NewBusinessError("not_project_manager","不是项目管理员"))
+	}
 	b_project.NewTunnel(bCtx, projectId, title)
 	response := vanilla.MakeResponse(vanilla.Map{})
 	this.ReturnJSON(response)
@@ -35,9 +41,16 @@ func (this *ProjectTunnel) Put()  {
 
 func (this *ProjectTunnel) Post()  {
 	bCtx := this.GetBusinessContext()
+
 	id, _ := this.GetInt("id")
 	title := this.GetString("title")
+	managerId, _ := this.GetInt("manager_id")
+	projectId, _ := this.GetInt("project_id")
 
+	project := b_project.NewProjectRepository(bCtx).GetProjectById(projectId)
+	if project.ManagerId != managerId {
+		panic(vanilla.NewBusinessError("not_project_manager","不是项目管理员"))
+	}
 	tunnel := b_project.NewTunnelRepository(bCtx).GetTunnelById(id)
 	tunnel.UpdateTitle(title)
 
@@ -47,8 +60,15 @@ func (this *ProjectTunnel) Post()  {
 
 func (this *ProjectTunnel) Delete()  {
 	bCtx := this.GetBusinessContext()
-	id, _ := this.GetInt("id")
 
+	id, _ := this.GetInt("id")
+	managerId, _ := this.GetInt("manager_id")
+	projectId, _ := this.GetInt("project_id")
+
+	project := b_project.NewProjectRepository(bCtx).GetProjectById(projectId)
+	if project.ManagerId != managerId {
+		panic(vanilla.NewBusinessError("not_project_manager","不是项目管理员"))
+	}
 	tunnel := b_project.NewTunnelRepository(bCtx).GetTunnelById(id)
 	tunnel.Deleted()
 	response := vanilla.MakeResponse(vanilla.Map{})

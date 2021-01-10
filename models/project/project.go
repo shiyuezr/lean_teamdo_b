@@ -36,12 +36,13 @@ func (self *Tunnel) TableName() string {
 type Task struct {
 	Id     		int
 	Title     	string
-	TunnelId	string
+	TunnelId	int
+	ProjectName string
 	ExecutorId	int		`orm:"default(0)"`
 
 	Status 		bool	`orm:"default(false)"`
 	Remark      string
-	Priority    int
+	Priority    string
 	IsDeleted	bool	`orm:"default(false)"`
 	Comment  	string	`orm:"size(500);default('')"`
 	StartDate	time.Time

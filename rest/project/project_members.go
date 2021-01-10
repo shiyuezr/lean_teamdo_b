@@ -1,8 +1,8 @@
-package user
+package project
 
 import (
 	"github.com/kfchen81/beego/vanilla"
-	b_user "teamdo/business/user"
+	"teamdo/business/project"
 )
 
 type Members struct {
@@ -22,8 +22,8 @@ func (this *Members) GetParameters() map[string][]string {
 func (this *Members) Get()  {
 	bCtx := this.GetBusinessContext()
 	projectId, _ := this.GetInt("project_id")
-	members := b_user.NewMemberRepository(bCtx).GetMembersByProjectId(projectId)
-	data := b_user.NewEncodeMemberService(bCtx).EncodeMany(members)
+	members := project.NewMemberRepository(bCtx).GetMembersByProjectId(projectId)
+	data := project.NewEncodeMemberService(bCtx).EncodeMany(members)
 	response := vanilla.MakeResponse(data)
 	this.ReturnJSON(response)
 }
