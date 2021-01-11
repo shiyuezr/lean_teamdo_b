@@ -35,7 +35,7 @@ func (this *AddMemberToProjectService) AddMemberToProject(projectId, userId int)
 	}
 }
 
-func NewProjectMemberService(ctx context.Context) *AddMemberToProjectService {
+func NewAddMemberToProjectService(ctx context.Context) *AddMemberToProjectService {
 	instance := new(AddMemberToProjectService)
 	instance.Ctx = ctx
 	return instance

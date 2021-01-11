@@ -2,7 +2,6 @@ package project
 
 import (
 	"context"
-	"fmt"
 	"github.com/kfchen81/beego"
 	"github.com/kfchen81/beego/orm"
 	"github.com/kfchen81/beego/vanilla"
@@ -49,21 +48,6 @@ func NewTunnelForModel(ctx context.Context, dbModel *m_project.Tunnel) *Tunnel {
 	return instance
 }
 
-//工厂方法
-func NewTunnel(ctx context.Context,projectId int, title string) *Tunnel {
-	o := vanilla.GetOrmFromContext(ctx)
-	model := m_project.Tunnel{}
-	model.Title = title
-	model.ProjectId = projectId
 
-	id, err := o.Insert(&model)
-	if err != nil {
-		beego.Error(err)
-		panic(vanilla.NewBusinessError("tunnel_create_fail",fmt.Sprintf("创建泳道失败")))
-	}
-	model.Id = int(id)
-
-	return NewTunnelForModel(ctx, &model)
-}
 
 

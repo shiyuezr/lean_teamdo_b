@@ -21,12 +21,12 @@ func (this *FillProjectService) FillOne(project *Project, option vanilla.FillOpt
 	}
 
 	if enableOption, ok := option["with_tunnel"]; ok && enableOption {
-		this.FillTunnel(project)
+		this.FillTunnels(project)
 	}
 }
 
 
-func (this *FillProjectService) FillTunnel(project *Project)  {
+func (this *FillProjectService) FillTunnels(project *Project)  {
 
 	tunnels := NewTunnelRepository(this.Ctx).GetTunnelsByProjectId(project.Id)
 	if len(tunnels) == 0{

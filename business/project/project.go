@@ -20,6 +20,24 @@ type Project struct {
 	Tunnel			[]*Tunnel
 }
 
+func (this *Project) AddMember()  {
+	
+}
+
+func (this *Project) AddTunnel(title string)  {
+	o := vanilla.GetOrmFromContext(this.Ctx)
+
+	model := m_project.Tunnel{}
+	model.Title = title
+	model.ProjectId = this.Id
+
+	_, err := o.Insert(&model)
+	if err != nil {
+		beego.Error(err)
+		panic(vanilla.NewBusinessError("tunnel_create_fail",fmt.Sprintf("添加泳道失败")))
+	}
+}
+
 func NewProject(ctx context.Context, userId int, projectName string) *Project {
 	o := vanilla.GetOrmFromContext(ctx)
 

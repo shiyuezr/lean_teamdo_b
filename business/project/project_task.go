@@ -33,12 +33,28 @@ func (this *Task) Delete()  {
 	}
 }
 
+func (this *Task) UpdateStatus(status bool)  {
+	o := vanilla.GetOrmFromContext(this.Ctx)
+	
+	_, err := o.QueryTable(&m_project.Task{}).Filter(vanilla.Map{"id": this.Id}).Update(orm.Params{
+		"status": status,
+	})
+
+	if err != nil {
+		beego.Error(err)
+		panic(err)
+	}
+}
+
+func (this *Task) UpdateExecutor(executorId int)  {
+	
+}
+
 func (this *Task) Update(title string, status bool, remark string, priority string)  {
 	o := vanilla.GetOrmFromContext(this.Ctx)
 
 	_, err := o.QueryTable(&m_project.Task{}).Filter(vanilla.Map{"id": this.Id}).Update(orm.Params{
 		"title": title,
-		"status": status,
 		"remark": remark,
 		"priority": priority,
 	})

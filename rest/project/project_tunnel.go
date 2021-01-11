@@ -33,7 +33,7 @@ func (this *ProjectTunnel) Put()  {
 	if project.ManagerId != managerId {
 		panic(vanilla.NewBusinessError("not_project_manager","不是项目管理员"))
 	}
-	b_project.NewTunnel(bCtx, projectId, title)
+	project.AddTunnel(title)
 	response := vanilla.MakeResponse(vanilla.Map{})
 	this.ReturnJSON(response)
 
