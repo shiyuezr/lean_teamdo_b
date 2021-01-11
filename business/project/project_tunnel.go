@@ -21,6 +21,26 @@ type Tunnel struct {
 	Task        []*Task
 }
 
+func (this *Tunnel) UpdateTitle(title string)  {
+	o := vanilla.GetOrmFromContext(this.Ctx)
+	_, err := o.QueryTable(&m_project.Tunnel{}).Filter("id", this.Id).Update(orm.Params{
+		"title": title,
+	})
+	if err != nil {
+		beego.Error(err)
+		panic(err)
+	}
+}
+
+func (this *Tunnel) Deleted()  {
+	o := vanilla.GetOrmFromContext(this.Ctx)
+	_, err := o.QueryTable(&m_project.Tunnel{}).Filter("id", this.Id).Delete()
+
+	if err != nil {
+		beego.Error(err)
+		panic(err)
+	}
+}
 func NewTunnelForModel(ctx context.Context, dbModel *m_project.Tunnel) *Tunnel {
 	instance := new(Tunnel)
 	instance.Ctx = ctx
@@ -46,23 +66,4 @@ func NewTunnel(ctx context.Context,projectId int, title string) *Tunnel {
 	return NewTunnelForModel(ctx, &model)
 }
 
-func (this *Tunnel) UpdateTitle(title string)  {
-	o := vanilla.GetOrmFromContext(this.Ctx)
-	_, err := o.QueryTable(&m_project.Tunnel{}).Filter("id", this.Id).Update(orm.Params{
-		"title": title,
-	})
-	if err != nil {
-		beego.Error(err)
-		panic(err)
-	}
-}
 
-func (this *Tunnel) Deleted()  {
-	o := vanilla.GetOrmFromContext(this.Ctx)
-	_, err := o.QueryTable(&m_project.Tunnel{}).Filter("id", this.Id).Delete()
-
-	if err != nil {
-		beego.Error(err)
-		panic(err)
-	}
-}

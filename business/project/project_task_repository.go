@@ -23,6 +23,17 @@ func (this *TaskRepository) GetTaskById(id int) *Task {
 	return tasks[0]
 }
 
+func (this *TaskRepository) GetTasksByTunnelIds(tunnelIds []int) []*Task {
+	if len(tunnelIds) == 0 {
+		return nil
+	}
+	filters := vanilla.Map{
+		"tunnelIds": tunnelIds,
+	}
+	tasks := this.GetByFilters(filters)
+	return tasks
+}
+
 func (this *TaskRepository) GetByFilters(filters vanilla.Map) []*Task {
 	o := vanilla.GetOrmFromContext(this.Ctx)
 	qs := o.QueryTable(&m_project.Project{})

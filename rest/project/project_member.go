@@ -10,12 +10,12 @@ type Member struct {
 }
 
 func (this *Member) Resource() string {
-	return "member.member"
+	return "project.member"
 }
 
 func (this *Member) GetParameter() map[string][]string {
 	return map[string][]string{
-		"POST": []string{"project_id: int", "user_id: int"},
+		"POST": []string{"project_id:int", "user_id:int"},
 	}
 }
 

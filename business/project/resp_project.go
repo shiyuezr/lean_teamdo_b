@@ -3,6 +3,9 @@ package project
 type RProject struct {
 	Id int	`json:"id"`
 	Name 	string `json:"name"`
+
+	Tunnel  *Tunnel `json:"tunnel"`
+	Task    *Task 	`json:"task"`
 }
 
 type RTunnel struct {

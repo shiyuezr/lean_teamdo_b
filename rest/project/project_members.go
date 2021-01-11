@@ -10,7 +10,7 @@ type Members struct {
 }
 
 func (this *Members) Resource() string {
-	return "member.members"
+	return "project.members"
 }
 
 func (this *Members) GetParameters() map[string][]string {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/kfchen81/beego"
+	"github.com/kfchen81/beego/orm"
 	"github.com/kfchen81/beego/vanilla"
 	m_project "teamdo/models/project"
 )
@@ -20,6 +21,32 @@ type Task struct {
 	IsDelete	bool
 	Remark		string
 	Priority	string
+}
+
+func (this *Task) Delete()  {
+	o := vanilla.GetOrmFromContext(this.Ctx)
+	_, err := o.QueryTable(&m_project.Task{}).Filter(vanilla.Map{"id": this.Id}).Delete()
+
+	if err != nil {
+		beego.Error(err)
+		panic(err)
+	}
+}
+
+func (this *Task) Update(title string, status bool, remark string, priority string)  {
+	o := vanilla.GetOrmFromContext(this.Ctx)
+
+	_, err := o.QueryTable(&m_project.Task{}).Filter(vanilla.Map{"id": this.Id}).Update(orm.Params{
+		"title": title,
+		"status": status,
+		"remark": remark,
+		"priority": priority,
+	})
+
+	if err != nil {
+		beego.Error(err)
+		panic(err)
+	}
 }
 
 func NewTask(

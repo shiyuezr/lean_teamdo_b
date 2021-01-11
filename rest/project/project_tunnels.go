@@ -16,7 +16,7 @@ func (this *ProjectTunnels) Resource() string {
 func (this *ProjectTunnels) GetParameters() map[string][]string {
 	return map[string][]string{
 		"GET": []string{
-			"project_id: int",
+			"project_id:int",
 		},
 	}
 }

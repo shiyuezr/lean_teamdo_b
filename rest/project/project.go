@@ -16,17 +16,34 @@ func (this *Project) Resource() string {
 func (this *Project) GetParameters() map[string][]string {
 	return map[string][]string{
 		"GET": []string{
-			"id: int",
+			"id:int",
+			"?with_options:json",
 		},
 		"PUT": []string{
-			"user_id: int",
-			"project_name: string",
+			"user_id:int",
+			"project_name:string",
 		},
 	}
 }
 
 func (this *Project) Get()  {
-	
+	bCtx := this.GetBusinessContext()
+
+	id, _ := this.GetInt("id")
+	project := b_project.NewProjectRepository(bCtx).GetProjectById(id)
+	if project == nil {
+		panic(vanilla.NewBusinessError("invalid_projectId", "项目不存在"))
+	}
+
+	withOptions := this.GetFillOptions("with_options")
+	withOptions["with_tunnel"] = true
+	b_project.NewFillProjectService(bCtx).FillOne(project, withOptions)
+	data := b_project.NewEncodeProjectService(bCtx).Encode(project)
+
+	response := vanilla.MakeResponse(vanilla.Map{
+		"project": data,
+	})
+	this.ReturnJSON(response)
 }
 
 
