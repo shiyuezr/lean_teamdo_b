@@ -25,6 +25,7 @@ func (this *Projects) Get()  {
 
 	projects := b_project.NewProjectRepository(bCtx).GetProjectsByUserId(userId)
 	data := b_project.NewEncodeProjectService(bCtx).EncodeMany(projects)
+
 	response := vanilla.MakeResponse(data)
 	this.ReturnJSON(response)
 }

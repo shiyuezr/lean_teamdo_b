@@ -28,7 +28,8 @@ func (this *TaskRepository) GetTasksByTunnelIds(tunnelIds []int) []*Task {
 		return nil
 	}
 	filters := vanilla.Map{
-		"tunnelIds": tunnelIds,
+		"tunnel_id__in": tunnelIds,
+		"is_delete": false,
 	}
 	tasks := this.GetByFilters(filters)
 	return tasks

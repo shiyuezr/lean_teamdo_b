@@ -2,7 +2,6 @@ package project
 
 import (
 	"context"
-	"fmt"
 	"github.com/kfchen81/beego"
 	"github.com/kfchen81/beego/orm"
 	"github.com/kfchen81/beego/vanilla"
@@ -21,6 +20,8 @@ type Task struct {
 	IsDelete	bool
 	Remark		string
 	Priority	string
+	StartDate	string
+	EndDate		string
 }
 
 func (this *Task) Delete()  {
@@ -46,16 +47,10 @@ func (this *Task) UpdateStatus(status bool)  {
 	}
 }
 
-func (this *Task) UpdateExecutor(executorId int)  {
-	
-}
-
-func (this *Task) Update(title string, status bool, remark string, priority string)  {
+func (this *Task) UpdatePriority(priority string)  {
 	o := vanilla.GetOrmFromContext(this.Ctx)
 
 	_, err := o.QueryTable(&m_project.Task{}).Filter(vanilla.Map{"id": this.Id}).Update(orm.Params{
-		"title": title,
-		"remark": remark,
 		"priority": priority,
 	})
 
@@ -65,37 +60,32 @@ func (this *Task) Update(title string, status bool, remark string, priority stri
 	}
 }
 
-func NewTask(
-	ctx context.Context,
-	title string,
-	tunnelId int,
-	executorId int,
-	status 	bool,
-	remark	string,
-	priority string,
-	projectName string,
-	) *Task {
 
-	o := vanilla.GetOrmFromContext(ctx)
+func (this *Task) UpdateExecutor(userId int)  {
+	o := vanilla.GetOrmFromContext(this.Ctx)
 
-	model := m_project.Task{}
-	model.Title = title
-	model.ExecutorId = executorId
-	model.TunnelId = tunnelId
-	model.Status = status
-	model.Remark = remark
-	model.ProjectName = projectName
-	model.Priority = priority
+	_, err := o.QueryTable(&m_project.Task{}).Filter(vanilla.Map{"id": this.Id}).Update(orm.Params{
+		"executor_id": userId,
+	})
 
-	id, err := o.Insert(&model)
 	if err != nil {
 		beego.Error(err)
-		panic(vanilla.NewBusinessError("create_task_fail", fmt.Sprintf("创建任务失败")))
+		panic(err)
 	}
-	model.Id = int(id)
+}
 
-	return NewTaskForModel(ctx, &model)
+func (this *Task) Update(title string, remark string)  {
+	o := vanilla.GetOrmFromContext(this.Ctx)
 
+	_, err := o.QueryTable(&m_project.Task{}).Filter(vanilla.Map{"id": this.Id}).Update(orm.Params{
+		"title": title,
+		"remark": remark,
+	})
+
+	if err != nil {
+		beego.Error(err)
+		panic(err)
+	}
 }
 
 func NewTaskForModel(ctx context.Context, dbModel *m_project.Task) *Task {

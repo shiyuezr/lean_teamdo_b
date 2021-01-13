@@ -22,6 +22,7 @@ func (this *EncodeProjectService) Encode(project *Project) *RProject {
 
 	return &RProject{
 		Name: project.Name,
+		ManagerId: project.ManagerId,
 	}
 }
 

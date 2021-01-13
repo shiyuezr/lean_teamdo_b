@@ -23,7 +23,8 @@ func (this *Members) Get()  {
 	bCtx := this.GetBusinessContext()
 	projectId, _ := this.GetInt("project_id")
 	members := project.NewMemberRepository(bCtx).GetMembersByProjectId(projectId)
-	data := project.NewEncodeMemberService(bCtx).EncodeMany(members)
-	response := vanilla.MakeResponse(data)
+	rMembers := project.NewEncodeMemberService(bCtx).EncodeMany(members)
+
+	response := vanilla.MakeResponse(rMembers)
 	this.ReturnJSON(response)
 }

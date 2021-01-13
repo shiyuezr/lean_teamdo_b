@@ -17,7 +17,6 @@ func (this *Project) GetParameters() map[string][]string {
 	return map[string][]string{
 		"GET": []string{
 			"id:int",
-			"?with_options:json",
 		},
 		"PUT": []string{
 			"user_id:int",
@@ -34,14 +33,10 @@ func (this *Project) Get()  {
 	if project == nil {
 		panic(vanilla.NewBusinessError("invalid_projectId", "项目不存在"))
 	}
-
-	withOptions := this.GetFillOptions("with_options")
-	withOptions["with_tunnel"] = true
-	b_project.NewFillProjectService(bCtx).FillOne(project, withOptions)
-	data := b_project.NewEncodeProjectService(bCtx).Encode(project)
+	rProject := b_project.NewEncodeProjectService(bCtx).Encode(project)
 
 	response := vanilla.MakeResponse(vanilla.Map{
-		"project": data,
+		"project": rProject,
 	})
 	this.ReturnJSON(response)
 }

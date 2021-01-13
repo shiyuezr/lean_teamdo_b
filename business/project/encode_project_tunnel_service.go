@@ -18,14 +18,20 @@ func NewEncodeTunnelService(ctx context.Context) *EncodeTunnelService {
 func (this *EncodeTunnelService) Encode(tunnel *Tunnel) *RTunnel {
 	if tunnel == nil {
 		return nil
-	} else {
-		return &RTunnel{
-			Id: tunnel.Id,
-			Title: tunnel.Title,
+	}
+
+	rTasks := make([]*RTask, 0)
+	if len(tunnel.Task) != 0 {
+		for _, task := range tunnel.Task {
+			rTasks = append(rTasks, NewEncodeTaskService(this.Ctx).Encode(task))
 		}
 	}
 
-
+	return &RTunnel{
+		Id: tunnel.Id,
+		Title: tunnel.Title,
+		Task: rTasks,
+	}
 }
 
 func (this *EncodeTunnelService) EncodeMany(tunnels []*Tunnel) []*RTunnel {

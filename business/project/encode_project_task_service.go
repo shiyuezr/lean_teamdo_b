@@ -26,6 +26,8 @@ func (this *EncodeTaskService) Encode(task *Task) *RTask {
 		Status: task.Status,
 		Remark: task.Remark,
 		Priority: task.Priority,
+		StartDate: task.StartDate,
+		EndDate: task.EndDate,
 	}
 }
 

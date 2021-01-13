@@ -5,43 +5,32 @@ import (
 	"github.com/kfchen81/beego/vanilla"
 )
 
-type FillProjectService struct {
+type FillTunnelsService struct {
 	vanilla.ServiceBase
 }
 
-func NewFillProjectService(ctx context.Context) *FillProjectService {
-	service := new(FillProjectService)
+func NewFillTunnelsService(ctx context.Context) *FillTunnelsService {
+	service := new(FillTunnelsService)
 	service.Ctx = ctx
 	return service
 }
 
-func (this *FillProjectService) FillOne(project *Project, option vanilla.FillOption)  {
-	if project == nil {
+func (this *FillTunnelsService) Fill(tunnels []*Tunnel, option vanilla.FillOption)  {
+	if len(tunnels) == 0 {
 		return
 	}
 
-	if enableOption, ok := option["with_tunnel"]; ok && enableOption {
-		this.FillTunnels(project)
-	}
-}
-
-
-func (this *FillProjectService) FillTunnels(project *Project)  {
-
-	tunnels := NewTunnelRepository(this.Ctx).GetTunnelsByProjectId(project.Id)
-	if len(tunnels) == 0{
-		return
-	}
 	tunnelIds := make([]int, 0)
 	for _, tunnel := range tunnels {
 		tunnelIds = append(tunnelIds, tunnel.Id)
 	}
-	this.FillTask(tunnels)
 
-	project.Tunnel = tunnels
+	if enableOption, ok := option["with_tunnel"]; ok && enableOption {
+		this.FillTasks(tunnels)
+	}
 }
 
-func (this *FillProjectService) FillTask(tunnels []*Tunnel)  {
+func (this *FillTunnelsService) FillTasks(tunnels []*Tunnel)  {
 	tunnelIds := make([]int, 0)
 	for _, tunnel := range tunnels {
 		tunnelIds = append(tunnelIds, tunnel.Id)
@@ -59,5 +48,4 @@ func (this *FillProjectService) FillTask(tunnels []*Tunnel)  {
 	for _, tunnel := range tunnels {
 		tunnel.Task = tunnelId2tasks[tunnel.Id]
 	}
-
 }

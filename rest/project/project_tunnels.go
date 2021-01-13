@@ -26,10 +26,10 @@ func (this *ProjectTunnels) Get()  {
 	projectId, _ := this.GetInt("project_id")
 
 	tunnels := b_project.NewTunnelRepository(bCtx).GetTunnelsByProjectId(projectId)
-	data := b_project.NewEncodeTunnelService(bCtx).EncodeMany(tunnels)
 
-	response := vanilla.MakeResponse(vanilla.Map{
-		"tunnels": data,
-	})
+	b_project.NewFillTunnelsService(bCtx).Fill(tunnels, vanilla.FillOption{"with_options": true})
+	rTunnels := b_project.NewEncodeTunnelService(bCtx).EncodeMany(tunnels)
+
+	response := vanilla.MakeResponse(rTunnels)
 	this.ReturnJSON(response)
 }

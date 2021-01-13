@@ -5,30 +5,30 @@ import (
 	b_project "teamdo/business/project"
 )
 
-type TaskExecutor struct {
+type TaskPriority struct {
 	vanilla.RestResource
 }
 
-func (this *TaskExecutor) Resource() string {
-	return "project.task_executor"
+func (this *TaskPriority) Resource() string {
+	return "project.task_priority"
 }
 
-func (this *TaskExecutor) GetParameters() map[string][]string {
+func (this *TaskPriority) GetParameters() map[string][]string {
 	return map[string][]string{
 		"POST": []string{
 			"id:int",
-			"user_id:int",
+			"priority",
 		},
 	}
 }
 
-func (this *TaskExecutor) Post()  {
+func (this *TaskPriority) Post()  {
 	bCtx := this.GetBusinessContext()
 
 	id, _ := this.GetInt("id")
-	userId, _ := this.GetInt("user_id")
+	priority := this.GetString("priority")
 	task := b_project.NewTaskRepository(bCtx).GetTaskById(id)
-	task.UpdateExecutor(userId)
+	task.UpdatePriority(priority)
 
 	response := vanilla.MakeResponse(vanilla.Map{})
 	this.ReturnJSON(response)

@@ -21,7 +21,6 @@ func (this *ProjectTunnel) GetParameters() map[string][]string {
 	}
 }
 
-// 前端在创建项目的时候， 会判断当前用户是不是项目的管理员
 func (this *ProjectTunnel) Put()  {
 	bCtx := this.GetBusinessContext()
 
@@ -34,9 +33,9 @@ func (this *ProjectTunnel) Put()  {
 		panic(vanilla.NewBusinessError("not_project_manager","不是项目管理员"))
 	}
 	project.AddTunnel(title)
+
 	response := vanilla.MakeResponse(vanilla.Map{})
 	this.ReturnJSON(response)
-
 }
 
 func (this *ProjectTunnel) Post()  {
@@ -71,6 +70,7 @@ func (this *ProjectTunnel) Delete()  {
 	}
 	tunnel := b_project.NewTunnelRepository(bCtx).GetTunnelById(id)
 	tunnel.Deleted()
+
 	response := vanilla.MakeResponse(vanilla.Map{})
 	this.ReturnJSON(response)
 }

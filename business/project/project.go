@@ -20,8 +20,29 @@ type Project struct {
 	Tunnel			[]*Tunnel
 }
 
-func (this *Project) AddMember()  {
-	
+
+func (this *Project) AddMember(userId int)  {
+	o := vanilla.GetOrmFromContext(this.Ctx)
+
+	model := m_project.ProjectHasMember{}
+	model.ProjectId = this.Id
+	model.UserId = userId
+
+	_, err := o.Insert(&model)
+	if err != nil {
+		beego.Error(err)
+		panic(vanilla.NewBusinessError("add_member_fail",fmt.Sprintf("添加成员失败")))
+	}
+}
+
+func (this *Project) DeleteMember(userId int)  {
+	o := vanilla.GetOrmFromContext(this.Ctx)
+
+	_, err := o.QueryTable(&m_project.ProjectHasMember{}).Filter(vanilla.Map{"userId": userId}).Delete()
+	if err != nil {
+		beego.Error(err)
+		panic(err)
+	}
 }
 
 func (this *Project) AddTunnel(title string)  {

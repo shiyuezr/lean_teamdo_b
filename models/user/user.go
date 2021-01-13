@@ -1,10 +1,15 @@
 package user
 
-import "github.com/kfchen81/beego/orm"
+import (
+	"github.com/kfchen81/beego/orm"
+	"time"
+)
 
 type User struct {
 	Id 			int
+	UserId 		int
 	UserName 	string
+	password 	string
 }
 
 func (self *User) TableName() string {
@@ -13,7 +18,9 @@ func (self *User) TableName() string {
 
 type Manager struct {
 	Id 			int
-	UserName	string
+	UserId 		int
+	projectId	int
+	CreatedAt	time.Time 	`orm:"auto_now_add;type(datetime)"`
 }
 
 func (self *Manager) TableName() string {
@@ -22,7 +29,9 @@ func (self *Manager) TableName() string {
 
 type Executor struct {
 	Id 			int
-	UserName	string
+	UserId     	int
+	TaskId 		int
+	CreatedAt	time.Time 	`orm:"auto_now_add;type(datetime)"`
 }
 
 func (self *Executor) TableName() string {
@@ -32,6 +41,7 @@ func (self *Executor) TableName() string {
 type Member struct {
 	Id 			int
 	UserName	string
+	CreatedAt	time.Time 	`orm:"auto_now_add;type(datetime)"`
 }
 
 func (self *Member) TableName() string {
