@@ -1,8 +1,8 @@
-package project
+package tunnel
 
 import (
 	"github.com/kfchen81/beego/vanilla"
-	b_project "teamdo/business/project"
+	"teamdo/business/tunnel"
 )
 
 type ProjectTunnels struct {
@@ -25,10 +25,10 @@ func (this *ProjectTunnels) Get()  {
 	bCtx := this.GetBusinessContext()
 	projectId, _ := this.GetInt("project_id")
 
-	tunnels := b_project.NewTunnelRepository(bCtx).GetTunnelsByProjectId(projectId)
+	tunnels := tunnel.NewTunnelRepository(bCtx).GetTunnelsByProjectId(projectId)
 
-	b_project.NewFillTunnelsService(bCtx).Fill(tunnels, vanilla.FillOption{"with_options": true})
-	rTunnels := b_project.NewEncodeTunnelService(bCtx).EncodeMany(tunnels)
+	tunnel.NewFillTunnelsService(bCtx).Fill(tunnels, vanilla.FillOption{"with_options": true})
+	rTunnels := tunnel.NewEncodeTunnelService(bCtx).EncodeMany(tunnels)
 
 	response := vanilla.MakeResponse(rTunnels)
 	this.ReturnJSON(response)

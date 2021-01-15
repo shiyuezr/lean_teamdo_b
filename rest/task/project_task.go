@@ -1,8 +1,9 @@
-package project
+package task
 
 import (
 	"github.com/kfchen81/beego/vanilla"
-	b_project "teamdo/business/project"
+	task2 "teamdo/business/task"
+	tunnel2 "teamdo/business/tunnel"
 )
 
 type Task struct {
@@ -28,7 +29,6 @@ func (this *Task) GetParameters() map[string][]string {
 		},
 		"POST": []string{
 			"id:int",
-			"title",
 			"remark",
 		},
 		"DELETE": []string{
@@ -42,8 +42,8 @@ func (this *Task) Get()  {
 
 	id, _ := this.GetInt("id")
 
-	task := b_project.NewTaskRepository(bCtx).GetTaskById(id)
-	data := b_project.NewEncodeTaskService(bCtx).Encode(task)
+	task := task2.NewTaskRepository(bCtx).GetTaskById(id)
+	data := task2.NewEncodeTaskService(bCtx).Encode(task)
 
 	response := vanilla.MakeResponse(vanilla.Map{
 		"task": data,
@@ -62,8 +62,9 @@ func (this *Task) Put()  {
 	startDateStr := this.GetString("start_date")
 	endDateStr := this.GetString("end_date")
 
-	tunnel := b_project.NewTunnelRepository(bCtx).GetTunnelById(tunnelId)
-	tunnel.AddTask(executorId, title, remark, priority, startDateStr, endDateStr)
+	tunnel := tunnel2.NewTunnelRepository(bCtx).GetTunnelById(tunnelId)
+	taskParams := tunnel2.NewTaskParams(executorId, title, remark, priority, startDateStr, endDateStr)
+	tunnel.AddTask(taskParams)
 
 	response := vanilla.MakeResponse(vanilla.Map{})
 	this.ReturnJSON(response)
@@ -73,11 +74,10 @@ func (this *Task) Post()  {
 	bCtx := this.GetBusinessContext()
 
 	id, _ := this.GetInt("id")
-	title := this.GetString("title", "")
-	remark := this.GetString("remark", "")
+	remark := this.GetString("remark")
 
-	task := b_project.NewTaskRepository(bCtx).GetTaskById(id)
-	task.Update(title, remark)
+	task := task2.NewTaskRepository(bCtx).GetTaskById(id)
+	task.Update(remark)
 
 	response := vanilla.MakeResponse(vanilla.Map{})
 	this.ReturnJSON(response)
@@ -87,7 +87,7 @@ func (this *Task) Delete()  {
 	bCtx := this.GetBusinessContext()
 
 	id, _ := this.GetInt("id")
-	task := b_project.NewTaskRepository(bCtx).GetTaskById(id)
+	task := task2.NewTaskRepository(bCtx).GetTaskById(id)
 	task.Delete()
 
 	response := vanilla.MakeResponse(vanilla.Map{})

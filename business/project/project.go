@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/kfchen81/beego"
 	"github.com/kfchen81/beego/vanilla"
+	b_tunnel "teamdo/business/tunnel"
 	m_project "teamdo/models/project"
 	"time"
 )
@@ -17,7 +18,7 @@ type Project struct {
 	ManagerId		int
 
 	Members			[]*Member
-	Tunnel			[]*Tunnel
+	Tunnel			[]*b_tunnel.Tunnel
 }
 
 

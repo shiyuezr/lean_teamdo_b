@@ -1,4 +1,4 @@
-package project
+package task
 
 import (
 	"context"
@@ -14,7 +14,6 @@ type Task struct {
 	Title       string
 	TunnelId	int
 	ExecutorId  int
-	projectName string
 
 	Status 		bool
 	IsDelete	bool
@@ -34,11 +33,37 @@ func (this *Task) Delete()  {
 	}
 }
 
-func (this *Task) UpdateStatus(status bool)  {
+func (this *Task) UpdateTitle(title string)  {
+	o := vanilla.GetOrmFromContext(this.Ctx)
+
+	_, err := o.QueryTable(&m_project.Task{}).Filter(vanilla.Map{"id": this.Id}).Update(orm.Params{
+		"title": title,
+	})
+
+	if err != nil {
+		beego.Error(err)
+		panic(err)
+	}
+}
+
+func (this *Task) CompleteTask()  {
 	o := vanilla.GetOrmFromContext(this.Ctx)
 	
 	_, err := o.QueryTable(&m_project.Task{}).Filter(vanilla.Map{"id": this.Id}).Update(orm.Params{
-		"status": status,
+		"status": true,
+	})
+
+	if err != nil {
+		beego.Error(err)
+		panic(err)
+	}
+}
+
+func (this *Task) FailToFinishTask()  {
+	o := vanilla.GetOrmFromContext(this.Ctx)
+
+	_, err := o.QueryTable(&m_project.Task{}).Filter(vanilla.Map{"id": this.Id}).Update(orm.Params{
+		"status": false,
 	})
 
 	if err != nil {
@@ -51,7 +76,7 @@ func (this *Task) UpdatePriority(priority string)  {
 	o := vanilla.GetOrmFromContext(this.Ctx)
 
 	_, err := o.QueryTable(&m_project.Task{}).Filter(vanilla.Map{"id": this.Id}).Update(orm.Params{
-		"priority": priority,
+		"priority": m_project.TASK_PRIOTITY_TYPE_CODE2PRIOTITY_TYPE[priority],
 	})
 
 	if err != nil {
@@ -74,11 +99,10 @@ func (this *Task) UpdateExecutor(userId int)  {
 	}
 }
 
-func (this *Task) Update(title string, remark string)  {
+func (this *Task) Update(remark string)  {
 	o := vanilla.GetOrmFromContext(this.Ctx)
 
 	_, err := o.QueryTable(&m_project.Task{}).Filter(vanilla.Map{"id": this.Id}).Update(orm.Params{
-		"title": title,
 		"remark": remark,
 	})
 
@@ -94,8 +118,7 @@ func NewTaskForModel(ctx context.Context, dbModel *m_project.Task) *Task {
 	instance.Id = dbModel.Id
 	instance.Title = dbModel.Title
 	instance.Status = dbModel.Status
-	instance.Priority = dbModel.Priority
+	instance.Priority = m_project.PRIOTITY_TYPE2CODE[dbModel.Priority]
 	instance.Remark = dbModel.Remark
-	instance.projectName = dbModel.ProjectName
 	return instance
 }

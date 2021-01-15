@@ -3,7 +3,7 @@ package project
 import (
 	"context"
 	"github.com/kfchen81/beego/vanilla"
-	"teamdo/business/user"
+	b_user "teamdo/business/user"
 )
 
 type EncodeMemberService struct {
@@ -16,18 +16,18 @@ func NewEncodeMemberService(ctx context.Context) *EncodeMemberService {
 	return service
 }
 
-func (this *EncodeMemberService) Encode(member *ProjectMember) *user.RMember {
+func (this *EncodeMemberService) Encode(member *ProjectMember) *b_user.RMember {
 	if member == nil {
 		return nil
 	}
 
-	return &user.RMember{
+	return &b_user.RMember{
 		Name: member.UserName,
 	}
 }
 
-func (this *EncodeMemberService) EncodeMany(members []*ProjectMember) []*user.RMember {
-	rDatas := make([]*user.RMember, 0)
+func (this *EncodeMemberService) EncodeMany(members []*ProjectMember) []*b_user.RMember {
+	rDatas := make([]*b_user.RMember, 0)
 	for _, member := range members {
 		rDatas = append(rDatas, this.Encode(member))
 	}

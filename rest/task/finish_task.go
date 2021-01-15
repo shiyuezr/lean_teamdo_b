@@ -1,0 +1,47 @@
+package task
+
+import (
+	"github.com/kfchen81/beego/vanilla"
+	task2 "teamdo/business/task"
+)
+
+type TaskStatus struct {
+	vanilla.RestResource
+}
+
+func (this *TaskStatus) Resource() string {
+	return "project.task_status"
+}
+
+func (this *TaskStatus) GetParameters() map[string][]string {
+	return map[string][]string{
+		"PUT": []string{
+			"task_id:int",
+		},
+		"DELETE": []string{
+			"task_id:int",
+		},
+	}
+}
+
+func (this *TaskStatus) Put()  {
+	bCtx := this.GetBusinessContext()
+
+	id, _ := this.GetInt("id")
+	task := task2.NewTaskRepository(bCtx).GetTaskById(id)
+	task.CompleteTask()
+
+	response := vanilla.MakeResponse(vanilla.Map{})
+	this.ReturnJSON(response)
+}
+
+func (this *TaskStatus) Delete()  {
+	bCtx := this.GetBusinessContext()
+
+	id, _ := this.GetInt("id")
+	task := task2.NewTaskRepository(bCtx).GetTaskById(id)
+	task.FailToFinishTask()
+
+	response := vanilla.MakeResponse(vanilla.Map{})
+	this.ReturnJSON(response)
+}

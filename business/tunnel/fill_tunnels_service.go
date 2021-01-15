@@ -1,8 +1,9 @@
-package project
+package tunnel
 
 import (
 	"context"
 	"github.com/kfchen81/beego/vanilla"
+	b_task "teamdo/business/task"
 )
 
 type FillTunnelsService struct {
@@ -35,13 +36,13 @@ func (this *FillTunnelsService) FillTasks(tunnels []*Tunnel)  {
 	for _, tunnel := range tunnels {
 		tunnelIds = append(tunnelIds, tunnel.Id)
 	}
-	tasks := NewTaskRepository(this.Ctx).GetTasksByTunnelIds(tunnelIds)
-	tunnelId2tasks :=make(map[int][]*Task)
+	tasks := b_task.NewTaskRepository(this.Ctx).GetTasksByTunnelIds(tunnelIds)
+	tunnelId2tasks :=make(map[int][]*b_task.Task)
 	for _, task := range tasks {
 		if exitTask, ok := tunnelId2tasks[task.Id]; ok {
 			tunnelId2tasks[task.Id] = append(exitTask, task)
 		} else {
-			tunnelId2tasks[task.Id] = []*Task{task}
+			tunnelId2tasks[task.Id] = []*b_task.Task{task}
 		}
 	}
 

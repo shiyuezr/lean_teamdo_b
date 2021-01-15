@@ -1,8 +1,8 @@
-package project
+package task
 
 import (
 	"github.com/kfchen81/beego/vanilla"
-	b_project "teamdo/business/project"
+	task2 "teamdo/business/task"
 )
 
 type TaskPriority struct {
@@ -16,8 +16,8 @@ func (this *TaskPriority) Resource() string {
 func (this *TaskPriority) GetParameters() map[string][]string {
 	return map[string][]string{
 		"POST": []string{
-			"id:int",
-			"priority",
+			"task_id:int",
+			"priority: int",
 		},
 	}
 }
@@ -25,9 +25,9 @@ func (this *TaskPriority) GetParameters() map[string][]string {
 func (this *TaskPriority) Post()  {
 	bCtx := this.GetBusinessContext()
 
-	id, _ := this.GetInt("id")
+	id, _ := this.GetInt("task_id")
 	priority := this.GetString("priority")
-	task := b_project.NewTaskRepository(bCtx).GetTaskById(id)
+	task := task2.NewTaskRepository(bCtx).GetTaskById(id)
 	task.UpdatePriority(priority)
 
 	response := vanilla.MakeResponse(vanilla.Map{})

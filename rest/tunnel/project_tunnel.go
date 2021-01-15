@@ -1,8 +1,9 @@
-package project
+package tunnel
 
 import (
 	"github.com/kfchen81/beego/vanilla"
 	b_project "teamdo/business/project"
+	tunnel2 "teamdo/business/tunnel"
 )
 
 type ProjectTunnel struct {
@@ -50,7 +51,7 @@ func (this *ProjectTunnel) Post()  {
 	if project.ManagerId != managerId {
 		panic(vanilla.NewBusinessError("not_project_manager","不是项目管理员"))
 	}
-	tunnel := b_project.NewTunnelRepository(bCtx).GetTunnelById(id)
+	tunnel := tunnel2.NewTunnelRepository(bCtx).GetTunnelById(id)
 	tunnel.UpdateTitle(title)
 
 	response := vanilla.MakeResponse(vanilla.Map{})
@@ -68,7 +69,7 @@ func (this *ProjectTunnel) Delete()  {
 	if project.ManagerId != managerId {
 		panic(vanilla.NewBusinessError("not_project_manager","不是项目管理员"))
 	}
-	tunnel := b_project.NewTunnelRepository(bCtx).GetTunnelById(id)
+	tunnel := tunnel2.NewTunnelRepository(bCtx).GetTunnelById(id)
 	tunnel.Deleted()
 
 	response := vanilla.MakeResponse(vanilla.Map{})
