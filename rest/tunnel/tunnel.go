@@ -6,15 +6,15 @@ import (
 	tunnel2 "teamdo/business/tunnel"
 )
 
-type ProjectTunnel struct {
+type Tunnel struct {
 	vanilla.RestResource
 }
 
-func (this *ProjectTunnel) Resource() string {
+func (this *Tunnel) Resource() string {
 	return "project.tunnel"
 }
 
-func (this *ProjectTunnel) GetParameters() map[string][]string {
+func (this *Tunnel) GetParameters() map[string][]string {
 	return map[string][]string{
 		"PUT": []string{"project_id:int", "title:string", "manager_id:int"},
 		"POST": []string{"project_id:int", "id:int", "title:string", "manager_id:int"},
@@ -22,7 +22,7 @@ func (this *ProjectTunnel) GetParameters() map[string][]string {
 	}
 }
 
-func (this *ProjectTunnel) Put()  {
+func (this *Tunnel) Put()  {
 	bCtx := this.GetBusinessContext()
 
 	projectId, _ := this.GetInt("project_id")
@@ -39,7 +39,7 @@ func (this *ProjectTunnel) Put()  {
 	this.ReturnJSON(response)
 }
 
-func (this *ProjectTunnel) Post()  {
+func (this *Tunnel) Post()  {
 	bCtx := this.GetBusinessContext()
 
 	id, _ := this.GetInt("id")
@@ -58,7 +58,7 @@ func (this *ProjectTunnel) Post()  {
 	this.ReturnJSON(response)
 }
 
-func (this *ProjectTunnel) Delete()  {
+func (this *Tunnel) Delete()  {
 	bCtx := this.GetBusinessContext()
 
 	id, _ := this.GetInt("id")

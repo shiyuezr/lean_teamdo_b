@@ -5,15 +5,15 @@ import (
 	task2 "teamdo/business/task"
 )
 
-type TaskStatus struct {
+type FinishTask struct {
 	vanilla.RestResource
 }
 
-func (this *TaskStatus) Resource() string {
+func (this *FinishTask) Resource() string {
 	return "project.task_status"
 }
 
-func (this *TaskStatus) GetParameters() map[string][]string {
+func (this *FinishTask) GetParameters() map[string][]string {
 	return map[string][]string{
 		"PUT": []string{
 			"task_id:int",
@@ -24,7 +24,7 @@ func (this *TaskStatus) GetParameters() map[string][]string {
 	}
 }
 
-func (this *TaskStatus) Put()  {
+func (this *FinishTask) Put()  {
 	bCtx := this.GetBusinessContext()
 
 	id, _ := this.GetInt("id")
@@ -35,7 +35,7 @@ func (this *TaskStatus) Put()  {
 	this.ReturnJSON(response)
 }
 
-func (this *TaskStatus) Delete()  {
+func (this *FinishTask) Delete()  {
 	bCtx := this.GetBusinessContext()
 
 	id, _ := this.GetInt("id")

@@ -19,6 +19,7 @@ type Tunnel struct {
 	ProjectId   int
 	IsDelete    bool
 	CreateAt    time.Time
+	DisplayIndex int
 
 	Task        []*b_task.Task
 }
@@ -77,6 +78,7 @@ func NewTunnelForModel(ctx context.Context, dbModel *m_project.Tunnel) *Tunnel {
 	instance.Id = dbModel.Id
 	instance.ProjectId = dbModel.ProjectId
 	instance.Title = dbModel.Title
+	instance.DisplayIndex = dbModel.DisplayIndex
 	return instance
 }
 

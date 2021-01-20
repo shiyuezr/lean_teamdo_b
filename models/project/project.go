@@ -23,6 +23,7 @@ type Tunnel struct {
 	Title  		string
 	ProjectId	int
 	ManagerId	int
+	DisplayIndex int
 
 	IsDeleted  	bool 	`orm:"default(false)"`
 	CreatedAt 	time.Time 	`orm:"auto_now_add;type(datetime)"`

@@ -5,15 +5,15 @@ import (
 	"teamdo/business/tunnel"
 )
 
-type ProjectTunnels struct {
+type Tunnels struct {
 	vanilla.RestResource
 }
 
-func (this *ProjectTunnels) Resource() string {
+func (this *Tunnels) Resource() string {
 	return "project.tunnels"
 }
 
-func (this *ProjectTunnels) GetParameters() map[string][]string {
+func (this *Tunnels) GetParameters() map[string][]string {
 	return map[string][]string{
 		"GET": []string{
 			"project_id:int",
@@ -21,7 +21,7 @@ func (this *ProjectTunnels) GetParameters() map[string][]string {
 	}
 }
 
-func (this *ProjectTunnels) Get()  {
+func (this *Tunnels) Get()  {
 	bCtx := this.GetBusinessContext()
 	projectId, _ := this.GetInt("project_id")
 

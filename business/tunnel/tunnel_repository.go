@@ -3,6 +3,7 @@ package tunnel
 import (
 	"context"
 	"github.com/kfchen81/beego"
+	"github.com/kfchen81/beego/orm"
 	"github.com/kfchen81/beego/vanilla"
 	m_project "teamdo/models/project"
 )
@@ -17,12 +18,36 @@ func NewTunnelRepository(ctx context.Context) *TunnelRepository {
 	return repository
 }
 
-func (this *TunnelRepository) GetByFilters(filters vanilla.Map) []*Tunnel {
+func (this *TunnelRepository) SortedTunnel(ids []int)  {
+	index := 0
+	for _, id := range ids {
+		this.UpdateDisplayIndex(id, index)
+		index += 1
+	}
+}
+
+func (this *TunnelRepository) UpdateDisplayIndex(id int, index int)  {
+	o := vanilla.GetOrmFromContext(this.Ctx)
+	_, err := o.QueryTable(&m_project.Tunnel{}).Filter(vanilla.Map{"id": id}).Update(orm.Params{
+		"display_index": index,
+	})
+
+	if err != nil {
+		beego.Error(err)
+		panic(err)
+	}
+}
+
+func (this *TunnelRepository) GetByFilters(filters vanilla.Map, orderExprs ...string) []*Tunnel {
 	o := vanilla.GetOrmFromContext(this.Ctx)
 	qs := o.QueryTable(&m_project.Tunnel{})
 
 	if len(filters) > 0 {
 		qs = qs.Filter(filters)
+	}
+
+	if len(orderExprs) > 0 {
+		qs = qs.OrderBy(orderExprs...)
 	}
 	var models []*m_project.Tunnel
 	_, err := qs.All(&models)

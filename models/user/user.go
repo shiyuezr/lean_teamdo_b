@@ -7,9 +7,8 @@ import (
 
 type User struct {
 	Id 			int
-	UserId 		int
 	UserName 	string
-	password 	string
+	Password 	string
 }
 
 func (self *User) TableName() string {
