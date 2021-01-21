@@ -32,7 +32,7 @@ func (this *User) Get()  {
 		"passWord": passWord,
 	}
 	users := b_user.NewUserRepository(bCtx).GetByFilters(filters)
-	if len(users) ==0 {
+	if len(users) == 0 {
 		panic("用户不存在")
 	}
 	response := vanilla.MakeResponse(vanilla.Map{"user": users})
