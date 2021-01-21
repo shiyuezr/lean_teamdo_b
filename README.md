@@ -8,7 +8,6 @@
 4. 授权数据库`grant all on teamdo.* to teamdo@'127.0.0.1' identified by 'root'`
 5. 执行`go run commands/cmd.go orm syncdb -v`安装数据库
 6. 执行`start_service.bat`启动服务
-7. 访问http://127.0.0.1:6021/console/console/，成功获取api console页面
 
 ### 如何集成到Ningx？
 1. 在hosts文件中添加如下域名
@@ -17,14 +16,21 @@
 127.0.0.1 db.dev.com
 ```
 
-2. 编辑Nginx的`nginx.conf`文件，在api.weapp.com配置中添加location
+2. 编辑Nginx的`nginx.conf`文件, 增加server配置
 ```
+server {
+    listen       80;
+    server_name  devapi.vxiaocheng.com;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    access_log  logs/api_gateway.access.log;
+    
     location /teamdo/ {
       #重写去掉url中server name部分
       rewrite ^/teamdo(.*)/ /$1 break;
-      #http 协议
       proxy_pass http://127.0.0.1:7001;
     }
+}
 ```
 
 ### 需求
