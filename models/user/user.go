@@ -34,7 +34,7 @@ type Executor struct {
 }
 
 func (self *Executor) TableName() string {
-	return "user_manager"
+	return "user_executor"
 }
 
 type Member struct {

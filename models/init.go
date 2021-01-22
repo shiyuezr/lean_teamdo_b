@@ -7,6 +7,8 @@ import (
 	"fmt"
 
 	_ "github.com/go-sql-driver/mysql"
+	_ "teamdo/models/user"
+	_ "teamdo/models/project"
 )
 
 func init() {
