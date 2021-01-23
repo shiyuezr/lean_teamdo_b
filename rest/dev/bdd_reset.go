@@ -19,12 +19,12 @@ func (r *BDDReset) IsForDevTest() bool {
 
 func (this *BDDReset) GetParameters() map[string][]string {
 	return map[string][]string{
-		"PUT":  []string{},
+		"PUT": []string{},
 	}
 }
 
 func (this *BDDReset) Put() {
-	if beego.AppConfig.DefaultString("db::DB_HOST", "db.dev.com") != "db.dev.com"{
+	if beego.AppConfig.DefaultString("db::DB_HOST", "db.dev.com") != "db.dev.com" {
 		panic(vanilla.NewSystemError("bdd_reset:failed", "必须连接本地数据库！(设置DB_HOST为db.dev.com，并且确保host指向本机)"))
 	}
 	//o := orm.NewOrm()

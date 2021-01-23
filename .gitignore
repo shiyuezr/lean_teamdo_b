@@ -17,3 +17,4 @@ features/.idea
 features/venv
 venv/
 .vscode/
+vendor

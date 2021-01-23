@@ -22,10 +22,11 @@ func init() {
 	password := beego.AppConfig.String("db::DB_PASSWORD")
 	charset := beego.AppConfig.String("db::DB_CHARSET")
 	mysqlURL := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&loc=Asia%%2FShanghai", user, password, host, port, db, charset)
-	
+
 	beego.Notice("connect mysql: ", mysqlURL)
+	//orm.RegisterDriver("mysql", orm.DRMySQL)
 	err := orm.RegisterDataBase("default", "mysql", mysqlURL, maxIdle, maxConn, maxIdleLifeTime)
-	if err != nil{
+	if err != nil {
 		beego.Error(err)
 	}
 }

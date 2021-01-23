@@ -6,17 +6,20 @@ import (
 	"github.com/kfchen81/beego/vanilla"
 	"github.com/kfchen81/beego/vanilla/cron"
 	"os"
+	_ "teamdo/middleware"
+	_ "teamdo/models"
+	_ "teamdo/routers"
 )
 
 // initService 初始化服务
-func initService(){
+func initService() {
 }
 
 func main() {
 	if beego.BConfig.RunMode == "dev" {
 		beego.BConfig.WebConfig.DirectoryIndex = true
 		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
-		beego.SetStaticPath("/static","vendor/github.com/kfchen81/beego/vanilla/static")
+		beego.SetStaticPath("/static", "vendor/github.com/kfchen81/beego/vanilla/static")
 	}
 	orm.Debug = true
 
@@ -28,13 +31,13 @@ func main() {
 	beego.BConfig.Log.AccessLogs = true
 
 	initService()
-	
+
 	serviceMode := vanilla.GetServiceMode()
 	if serviceMode == vanilla.SERVICE_MODE_REST {
 		beego.Info("run service in REST mode ")
 		cron.StartCronTasks()
 		defer cron.StopCronTasks()
-		
+
 		beego.Run()
 	} else if serviceMode == vanilla.SERVICE_MODE_CRON {
 		beego.Info("run service in CRON mode")
@@ -43,4 +46,3 @@ func main() {
 		<-stop
 	}
 }
-
