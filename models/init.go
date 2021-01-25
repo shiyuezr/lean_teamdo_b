@@ -1,12 +1,10 @@
 package models
 
 import (
+	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/kfchen81/beego"
 	"github.com/kfchen81/beego/orm"
-
-	"fmt"
-
-	_ "github.com/go-sql-driver/mysql"
 )
 
 func init() {

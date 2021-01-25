@@ -12,9 +12,3 @@ type Comment struct {
 	CreatedAt       time.Time
 	UsernameComment string
 }
-
-//func NewTagRepository(ctx context.Context) *TagRepository {
-//	repository := new(TagRepository)
-//	repository.Ctx = ctx
-//	return repository
-//}
