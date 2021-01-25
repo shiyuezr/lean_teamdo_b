@@ -6,8 +6,14 @@
 2. 确保能以root:root访问本地数据库
 3. 创建数据库`create database teamdo`
 4. 授权数据库`grant all on teamdo.* to teamdo@'127.0.0.1' identified by 'root'`
-5. 执行`go run commands/cmd.go orm syncdb -v`安装数据库
-6. 执行`start_service.bat`启动服务
+5. 配置本地环境变量
+   ```
+   BEEGO_RUNMODE = dev
+   BEEGO_MODE = dev
+   ENABLE_DEV_TEST_RESOURCE = 1
+   ```
+6. 执行`go run commands/cmd.go orm syncdb -v`安装数据库
+7. 执行`start_service.bat`启动服务
 
 ### 如何集成到Ningx？
 1. 在hosts文件中添加如下域名

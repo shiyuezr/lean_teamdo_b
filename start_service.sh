@@ -20,14 +20,8 @@ echo "mode: ${_SERVICE_MODE}"
 echo '<<<<<'
 if [ "$_SERVICE_MODE" == "deploy" ]; then
 	echo "deploy now"
-	if [ "${_TRACING_MODE}" == "disable" ]; then
-		echo "[jaeger] DISABLE agent"
-	else
-		echo "[jaeger] start agent with endpoint:${_ALIYUN_JAEGER_ENDPOINT}, token:${_ALIYUN_JAEGER_TOKEN}"
-		./jaeger-agent --reporter.grpc.host-port=${_ALIYUN_JAEGER_ENDPOINT} --jaeger.tags=Authentication=${_ALIYUN_JAEGER_TOKEN} &
-	fi
-    ./teamdo
+  ./teamdo
 else
 	echo "dev now"
-	BEEGO_RUNMODE=dev ENABLE_DEV_TEST_RESOURCE=1 BEEGO_MODE=dev bee run teamdo
+	BEEGO_RUNMODE=dev ENABLE_DEV_TEST_RESOURCE=1 BEEGO_MODE=dev bee run .
 fi

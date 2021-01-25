@@ -13,11 +13,6 @@ func initService(){
 }
 
 func main() {
-	if beego.BConfig.RunMode == "dev" {
-		beego.BConfig.WebConfig.DirectoryIndex = true
-		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
-		beego.SetStaticPath("/static","vendor/github.com/kfchen81/beego/vanilla/static")
-	}
 	orm.Debug = true
 
 	beegoMode := os.Getenv("BEEGO_RUNMODE")

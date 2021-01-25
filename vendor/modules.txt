@@ -19,7 +19,7 @@ github.com/gomodule/redigo/internal
 github.com/gomodule/redigo/redis
 # github.com/gorilla/websocket v1.4.1
 github.com/gorilla/websocket
-# github.com/kfchen81/beego v1.11.2-0.20201218072051-1bf06f78aef6
+# github.com/kfchen81/beego v1.11.2-0.20201230071716-06a6ca8f3ed4
 github.com/kfchen81/beego
 github.com/kfchen81/beego/config
 github.com/kfchen81/beego/context
