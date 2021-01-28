@@ -19,7 +19,7 @@ func (this *ContextFactory) NewContext(ctx context.Context, request *http.Reques
 	user.Id = 1
 	user.RawData = rawData
 	user.Ctx = ctx
-	ctx = context.WithValue(ctx, "user", user)
+	ctx = context.WithValue(ctx, "account", user)
 	return ctx
 }
 

@@ -5,6 +5,13 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/kfchen81/beego"
 	"github.com/kfchen81/beego/orm"
+
+	_ "teamdo/models/account"
+	_ "teamdo/models/comment"
+	_ "teamdo/models/lane"
+	_ "teamdo/models/log"
+	_ "teamdo/models/project"
+	_ "teamdo/models/task"
 )
 
 func init() {

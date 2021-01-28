@@ -18,75 +18,70 @@ func (this *Project) GetParameters() map[string][]string {
 		"GET": []string{"id:int"},
 		"PUT": []string{
 			"name:string",
-			"information:string",
+			"content:string",
 		},
 		"POST": []string{
+			"id:int",
 			"name:string",
-			"information:string",
+			"content:string",
+			"status:int",
 		},
 		"DELETE": []string{"id:int"},
 	}
 }
 
 func (this *Project) Get() {
-	id,_ := this.GetInt("id")
+	id, _ := this.GetInt("id")
 	bCtx := this.GetBusinessContext()
 
 	repository := b_project.NewProjectRepository(bCtx)
 	project := repository.GetProjectById(id)
+	if project == nil {
+		panic(vanilla.NewBusinessError("project_not_exist", "项目不存在"))
+	}
 
 	encodeService := b_project.NewEncodeProjectService(bCtx)
 	respData := encodeService.Encode(project)
-
 	response := vanilla.MakeResponse(respData)
 	this.ReturnJSON(response)
 }
 
 func (this *Project) Put() {
 	name := this.GetString("name")
-	information := this.GetString("information")
-
+	content := this.GetString("content")
 	bCtx := this.GetBusinessContext()
 
-	project := b_project.NewProject(bCtx, name, information)
-
-	operation := b_project.NewProjectOperationService(bCtx)
-	resp_id := operation.ProjectInsert(project)
-
+	project := b_project.NewProject(bCtx, name, content)
 	response := vanilla.MakeResponse(vanilla.Map{
-		"id": resp_id,
+		"id": project.Id,
 	})
 	this.ReturnJSON(response)
 }
 
 func (this *Project) Delete() {
 	id, _ := this.GetInt("id")
-
 	bCtx := this.GetBusinessContext()
 
-	operation := b_project.NewProjectOperationService(bCtx)
-	resp_id := operation.ProjectDelete(id)
+	project := b_project.NewProjectRepository(bCtx).GetProjectById(id)
+	project.Delete()
 
 	response := vanilla.MakeResponse(vanilla.Map{
-		"id": resp_id,
+		"id": id,
 	})
 	this.ReturnJSON(response)
 }
 
 func (this *Project) Post() {
+	id, _ := this.GetInt("id")
 	name := this.GetString("name")
-	information := this.GetString("information")
-
+	content := this.GetString("content")
+	status, _ := this.GetInt("status")
 	bCtx := this.GetBusinessContext()
 
 	repository := b_project.NewProjectRepository(bCtx)
-	project := repository.GetProjectByName(name)
+	project := repository.GetProjectById(id)
+	_ = project.Update(name, content, status)
 
-	operation := b_project.NewProjectOperationService(bCtx)
-	resp_id := operation.ProjectModify(project.Id, name, information)
-
-	response := vanilla.MakeResponse(vanilla.Map{
-		"id": resp_id,
-	})
+	response := vanilla.MakeResponse(vanilla.Map{})
 	this.ReturnJSON(response)
 }

@@ -10,7 +10,7 @@ type User struct {
 }
 
 func (this *User) Resource() string {
-	return "account_exist.user"
+	return "account.logined.user"
 }
 
 func (this *User) GetParameters() map[string][]string {
@@ -26,17 +26,13 @@ func (this *User) GetParameters() map[string][]string {
 func (this *User) Put() {
 	username := this.GetString("username")
 	password := this.GetString("password")
-
 	bCtx := this.GetBusinessContext()
 
-	repository := b_account.NewUserRepository(bCtx)
-	user := repository.GetUserByInformation(username, password)
-
-	login := b_account.NewLoginService(bCtx)
-	user_login := login.Login(user)
+	loginUser := b_account.NewLoginUser(bCtx, username, password)
+	respUser := loginUser.Login()
 
 	encodeService := b_account.NewEncodeUserService(bCtx)
-	respData := encodeService.Encode(user_login)
+	respData := encodeService.Encode(respUser)
 
 	response := vanilla.MakeResponse(respData)
 	this.ReturnJSON(response)

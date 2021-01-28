@@ -2,7 +2,7 @@ package lane
 
 import (
 	"github.com/kfchen81/beego/vanilla"
-	"teamdo/business/task"
+	"teamdo/business/project"
 )
 
 type Lane struct {
@@ -10,5 +10,5 @@ type Lane struct {
 	Id   int
 	Name string
 
-	TasksLane []*task.Task
+	Project *project.Project //所属项目
 }
