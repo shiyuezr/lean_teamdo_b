@@ -3,6 +3,7 @@ package project
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/kfchen81/beego"
 	"github.com/kfchen81/beego/orm"
 	"github.com/kfchen81/beego/vanilla"
@@ -34,7 +35,6 @@ func (this *Project) Update(name string, content string, status int) error {
 		return errors.New("project:update_fail")
 	}
 	return nil
-
 }
 
 func (this *Project) Delete() {
@@ -42,6 +42,27 @@ func (this *Project) Delete() {
 	if err != nil {
 		beego.Error(err)
 		panic(err)
+	}
+}
+
+func (this *Project) AuthorityVerify(jwt string) {
+	userJson, _ := vanilla.DecodeJWT(jwt)
+	userMap, _ := userJson.Map()
+	uid := userMap["uid"]
+	filters := vanilla.Map{
+		"project_id":       this.Id,
+		"administrator_id": uid,
+	}
+	qs := vanilla.GetOrmFromContext(this.Ctx).QueryTable(m_project.ProjectToAdministrators{})
+	var model m_project.ProjectToAdministrators
+	if len(filters) > 0 {
+		qs = qs.Filter(filters)
+	}
+
+	err := qs.One(&model)
+	if err != nil {
+		beego.Error(err)
+		panic(vanilla.NewBusinessError("authority verification：fail", fmt.Sprintf("非管理员不能修改项目")))
 	}
 }
 

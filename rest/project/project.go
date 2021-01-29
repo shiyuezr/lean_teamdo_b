@@ -15,7 +15,7 @@ func (this *Project) Resource() string {
 
 func (this *Project) GetParameters() map[string][]string {
 	return map[string][]string{
-		"GET": []string{"id:int"},
+		"GET": []string{"id:int", "?with_options:json"},
 		"PUT": []string{
 			"name:string",
 			"content:string",
@@ -39,6 +39,8 @@ func (this *Project) Get() {
 	if project == nil {
 		panic(vanilla.NewBusinessError("project_not_exist", "项目不存在"))
 	}
+
+	b_project.NewFillProjectService(bCtx).FillOne(project, this.GetFillOptions("with_options"))
 
 	encodeService := b_project.NewEncodeProjectService(bCtx)
 	respData := encodeService.Encode(project)
@@ -77,9 +79,11 @@ func (this *Project) Post() {
 	content := this.GetString("content")
 	status, _ := this.GetInt("status")
 	bCtx := this.GetBusinessContext()
+	jwt := this.Ctx.Request.Header.Get("Authorization")
 
 	repository := b_project.NewProjectRepository(bCtx)
 	project := repository.GetProjectById(id)
+	project.AuthorityVerify(jwt)
 	_ = project.Update(name, content, status)
 
 	response := vanilla.MakeResponse(vanilla.Map{})

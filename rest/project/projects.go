@@ -16,7 +16,7 @@ func (this *Projects) Resource() string {
 
 func (this *Projects) GetParameters() map[string][]string {
 	return map[string][]string{
-		"GET": []string{"?filters:json"},
+		"GET": {"?filters:json", "?with_options:json"},
 	}
 }
 
@@ -26,6 +26,7 @@ func (this *Projects) Get() {
 
 	projects := b_project.NewProjectRepository(bCtx).GetByFilters(filters)
 
+	b_project.NewFillProjectService(bCtx).Fill(projects, this.GetFillOptions("with_options"))
 	response := vanilla.MakeResponse(b_project.NewEncodeProjectService(bCtx).EncodeMany(projects))
 	this.ReturnJSON(response)
 }

@@ -3,6 +3,7 @@ package project
 import (
 	"context"
 	"github.com/kfchen81/beego/vanilla"
+	b_account "teamdo/business/account"
 )
 
 type EncodeProjectService struct {
@@ -14,12 +15,18 @@ func (this *EncodeProjectService) Encode(project *Project) *RProject {
 	if project == nil {
 		return nil
 	}
-	return &RProject{
-		Id:      project.Id,
-		Name:    project.Name,
-		Content: project.Content,
-		Status:  project.Status,
+	rAdministrators := b_account.NewEncodeAdministratorService(this.Ctx).EncodeMany(project.Administrators)
+	rParticipants := b_account.NewEncodeParticipantService(this.Ctx).EncodeMany(project.Participants)
+
+	encodedProject := &RProject{
+		Id:             project.Id,
+		Name:           project.Name,
+		Content:        project.Content,
+		Status:         project.Status,
+		Administrators: rAdministrators,
+		Participants:   rParticipants,
 	}
+	return encodedProject
 }
 
 func (this *EncodeProjectService) EncodeMany(projects []*Project) []*RProject {

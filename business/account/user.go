@@ -2,6 +2,7 @@ package account
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"github.com/bitly/go-simplejson"
 	"github.com/kfchen81/beego"
@@ -20,9 +21,10 @@ type User struct {
 }
 
 func (this *User) Login() *User {
+	base64Password := base64.StdEncoding.EncodeToString([]byte(this.Password))
 	filters := vanilla.Map{
 		"username": this.Username,
-		"password": this.Password,
+		"password": base64Password,
 	}
 
 	qs := vanilla.GetOrmFromContext(this.Ctx).QueryTable(m_account.User{})
