@@ -6,11 +6,11 @@ import (
 	"github.com/kfchen81/beego/vanilla"
 	"github.com/kfchen81/beego/vanilla/cron"
 	"os"
-
+	_ "teamdo/business/account"
+	_ "teamdo/cron"
 	_ "teamdo/middleware"
 	_ "teamdo/models"
 	_ "teamdo/routers"
-	_ "teamdo/cron"
 )
 
 // initService 初始化服务
