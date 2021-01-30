@@ -28,7 +28,7 @@ func (this *User) Put() {
 	password := this.GetString("password")
 	bCtx := this.GetBusinessContext()
 
-	loginUser := b_account.NewLoginUser(bCtx, username, password)
+	loginUser := b_account.NewUserFromLoginInfo(bCtx, username, password)
 	respUser := loginUser.Login()
 
 	encodeService := b_account.NewEncodeUserService(bCtx)

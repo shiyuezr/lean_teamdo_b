@@ -7,7 +7,7 @@ import (
 	"github.com/kfchen81/beego"
 	"github.com/kfchen81/beego/orm"
 	"github.com/kfchen81/beego/vanilla"
-	"teamdo/business/account"
+	b_account "teamdo/business/account"
 	m_project "teamdo/models/project"
 )
 
@@ -18,8 +18,8 @@ type Project struct {
 	Content string
 	Status  int //完成状态
 
-	Administrators []*account.User //管理员
-	Participants   []*account.User //参与者
+	Administrators []*b_account.User //管理员
+	Participants   []*b_account.User //参与者
 }
 
 func (this *Project) Update(name string, content string, status int) error {
@@ -45,10 +45,8 @@ func (this *Project) Delete() {
 	}
 }
 
-func (this *Project) AuthorityVerify(jwt string) {
-	userJson, _ := vanilla.DecodeJWT(jwt)
-	userMap, _ := userJson.Map()
-	uid := userMap["uid"]
+func (this *Project) AuthorityVerify() {
+	uid :=  b_account.GetUserFromContext(this.Ctx).Id
 	filters := vanilla.Map{
 		"project_id":       this.Id,
 		"administrator_id": uid,

@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/kfchen81/beego"
 	"github.com/kfchen81/beego/vanilla"
-	"teamdo/business/account"
+	b_account "teamdo/business/account"
 	m_account "teamdo/models/account"
 	m_project "teamdo/models/project"
 )
@@ -69,7 +69,7 @@ func (this *FillProjectService) fillParticipant(projects []*Project, ids []int) 
 
 		if project, ok := id2entity[projectId]; ok {
 			if model, ok2 := id2model[participantId]; ok2 {
-				project.Participants = append(project.Participants, account.NewUserFromModel(this.Ctx, model))
+				project.Participants = append(project.Participants, b_account.NewUserFromModel(this.Ctx, model))
 			}
 		}
 	}
@@ -110,7 +110,7 @@ func (this *FillProjectService) fillAdministrator(projects []*Project, ids []int
 
 		if project, ok := id2entity[projectId]; ok {
 			if model, ok2 := id2model[administratorId]; ok2 {
-				project.Administrators = append(project.Administrators, account.NewUserFromModel(this.Ctx, model))
+				project.Administrators = append(project.Administrators, b_account.NewUserFromModel(this.Ctx, model))
 			}
 		}
 	}

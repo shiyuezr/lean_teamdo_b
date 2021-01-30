@@ -12,23 +12,23 @@ import (
 
 type User struct {
 	vanilla.EntityBase
-	Id       int
-	Username string
-	Password string
-	Token    string //身份识别码
-	Status   int    //用户状态
-	RawData  *simplejson.Json
+	Id             int
+	Username       string
+	Password       string
+	EncodePassword string
+	Token          string //身份识别码
+	Status         int    //用户状态
+	RawData        *simplejson.Json
 }
 
 func (this *User) Login() *User {
-	base64Password := base64.StdEncoding.EncodeToString([]byte(this.Password))
+	this.EncodePassword = base64.StdEncoding.EncodeToString([]byte(this.Password))
 	filters := vanilla.Map{
 		"username": this.Username,
-		"password": base64Password,
+		"password": this.EncodePassword,
 	}
 
 	qs := vanilla.GetOrmFromContext(this.Ctx).QueryTable(m_account.User{})
-
 	var model m_account.User
 	if len(filters) > 0 {
 		qs = qs.Filter(filters)
@@ -50,7 +50,7 @@ func (this *User) Login() *User {
 	return respUser
 }
 
-func NewLoginUser(ctx context.Context, username string, password string) *User {
+func NewUserFromLoginInfo(ctx context.Context, username string, password string) *User {
 	instance := new(User)
 	instance.Ctx = ctx
 	instance.Username = username
@@ -65,6 +65,11 @@ func NewUserFromModel(ctx context.Context, model *m_account.User) *User {
 	instance.Username = model.Username
 	instance.Password = model.Password
 	return instance
+}
+
+func GetUserFromContext(ctx context.Context) *User {
+	user := ctx.Value("user").(*User)
+	return user
 }
 
 func init() {

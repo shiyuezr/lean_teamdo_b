@@ -79,11 +79,10 @@ func (this *Project) Post() {
 	content := this.GetString("content")
 	status, _ := this.GetInt("status")
 	bCtx := this.GetBusinessContext()
-	jwt := this.Ctx.Request.Header.Get("Authorization")
 
 	repository := b_project.NewProjectRepository(bCtx)
 	project := repository.GetProjectById(id)
-	project.AuthorityVerify(jwt)
+	project.AuthorityVerify()
 	_ = project.Update(name, content, status)
 
 	response := vanilla.MakeResponse(vanilla.Map{})

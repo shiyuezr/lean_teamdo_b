@@ -12,14 +12,14 @@ var gInstance *ContextFactory
 type ContextFactory struct {
 }
 
-// NewContext 构造含有corp的Context
+// NewContext
 func (this *ContextFactory) NewContext(ctx context.Context, request *http.Request, userId int, jwtToken string, rawData *simplejson.Json) context.Context {
 	user := new(User)
 	user.Model = nil
-	user.Id = 1
+	user.Id = userId
 	user.RawData = rawData
 	user.Ctx = ctx
-	ctx = context.WithValue(ctx, "account", user)
+	ctx = context.WithValue(ctx, "user", user)
 	return ctx
 }
 

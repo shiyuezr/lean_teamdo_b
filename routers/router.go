@@ -14,4 +14,5 @@ func init() {
 	vanilla.Router(&account.User{})
 	vanilla.Router(&project.Project{})
 	vanilla.Router(&project.Projects{})
+	vanilla.Router(&project.ProjectManager{})
 }
