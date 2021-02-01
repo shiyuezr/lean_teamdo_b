@@ -15,8 +15,8 @@ func (this *EncodeProjectService) Encode(project *Project) *RProject {
 	if project == nil {
 		return nil
 	}
-	rAdministrators := b_account.NewEncodeAdministratorService(this.Ctx).EncodeMany(project.Administrators)
-	rParticipants := b_account.NewEncodeParticipantService(this.Ctx).EncodeMany(project.Participants)
+	rAdministrators := b_account.NewEncodeUserService(this.Ctx).EncodeMany(project.Administrators)
+	rParticipants := b_account.NewEncodeUserService(this.Ctx).EncodeMany(project.Participants)
 
 	encodedProject := &RProject{
 		Id:             project.Id,

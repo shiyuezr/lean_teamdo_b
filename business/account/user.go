@@ -2,10 +2,7 @@ package account
 
 import (
 	"context"
-	"encoding/base64"
-	"fmt"
 	"github.com/bitly/go-simplejson"
-	"github.com/kfchen81/beego"
 	"github.com/kfchen81/beego/vanilla"
 	m_account "teamdo/models/account"
 )
@@ -22,40 +19,12 @@ type User struct {
 }
 
 func (this *User) Login() *User {
-	this.EncodePassword = base64.StdEncoding.EncodeToString([]byte(this.Password))
-	filters := vanilla.Map{
-		"username": this.Username,
-		"password": this.EncodePassword,
-	}
-
-	qs := vanilla.GetOrmFromContext(this.Ctx).QueryTable(m_account.User{})
-	var model m_account.User
-	if len(filters) > 0 {
-		qs = qs.Filter(filters)
-	}
-
-	err := qs.One(&model)
-	if err != nil {
-		beego.Error(err)
-		panic(vanilla.NewBusinessError("user:login_fail", fmt.Sprintf("登录失败，用户名或密码错误")))
-		return nil
-	}
-
-	respUser := NewUserFromModel(this.Ctx, &model)
 	jwtToken := vanilla.EncodeJWT(vanilla.Map{
 		"type": 2,
-		"uid":  respUser.Id,
+		"uid":  this.Id,
 	})
-	respUser.Token = jwtToken
-	return respUser
-}
-
-func NewUserFromLoginInfo(ctx context.Context, username string, password string) *User {
-	instance := new(User)
-	instance.Ctx = ctx
-	instance.Username = username
-	instance.Password = password
-	return instance
+	this.Token = jwtToken
+	return this
 }
 
 func NewUserFromModel(ctx context.Context, model *m_account.User) *User {

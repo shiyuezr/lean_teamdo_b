@@ -2,7 +2,6 @@ package project
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/kfchen81/beego"
 	"github.com/kfchen81/beego/orm"
@@ -22,7 +21,7 @@ type Project struct {
 	Participants   []*b_account.User //参与者
 }
 
-func (this *Project) Update(name string, content string, status int) error {
+func (this *Project) Update(name string, content string, status int) {
 	var model m_project.Project
 	o := vanilla.GetOrmFromContext(this.Ctx)
 	_, err := o.QueryTable(&model).Filter("id", this.Id).Update(orm.Params{
@@ -32,9 +31,8 @@ func (this *Project) Update(name string, content string, status int) error {
 	})
 	if err != nil {
 		beego.Error(err)
-		return errors.New("project:update_fail")
+		panic(vanilla.NewBusinessError("update：fail", fmt.Sprintf("修改项目失败")))
 	}
-	return nil
 }
 
 func (this *Project) Delete() {
@@ -45,8 +43,21 @@ func (this *Project) Delete() {
 	}
 }
 
+func (this *Project) AddManager(uid int ) *Project{
+	dbModel := &m_project.ProjectToAdministrators{
+		ProjectId:       this.Id,
+		AdministratorId: uid,
+	}
+	_, err := vanilla.GetOrmFromContext(this.Ctx).Insert(dbModel)
+	if err != nil {
+		beego.Error(err)
+		panic(vanilla.NewSystemError("create:failed", "创建失败"))
+	}
+	return this
+}
+
 func (this *Project) AuthorityVerify() {
-	uid :=  b_account.GetUserFromContext(this.Ctx).Id
+	uid := b_account.GetUserFromContext(this.Ctx).Id
 	filters := vanilla.Map{
 		"project_id":       this.Id,
 		"administrator_id": uid,
@@ -60,7 +71,7 @@ func (this *Project) AuthorityVerify() {
 	err := qs.One(&model)
 	if err != nil {
 		beego.Error(err)
-		panic(vanilla.NewBusinessError("authority verification：fail", fmt.Sprintf("非管理员不能修改项目")))
+		panic(vanilla.NewBusinessError("authority verification：fail", fmt.Sprintf("非管理员不能修改项目信息")))
 	}
 }
 

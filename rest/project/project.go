@@ -65,6 +65,7 @@ func (this *Project) Delete() {
 	bCtx := this.GetBusinessContext()
 
 	project := b_project.NewProjectRepository(bCtx).GetProjectById(id)
+	project.AuthorityVerify()
 	project.Delete()
 
 	response := vanilla.MakeResponse(vanilla.Map{
@@ -83,7 +84,7 @@ func (this *Project) Post() {
 	repository := b_project.NewProjectRepository(bCtx)
 	project := repository.GetProjectById(id)
 	project.AuthorityVerify()
-	_ = project.Update(name, content, status)
+	project.Update(name, content, status)
 
 	response := vanilla.MakeResponse(vanilla.Map{})
 	this.ReturnJSON(response)
