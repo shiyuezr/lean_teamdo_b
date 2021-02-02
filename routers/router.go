@@ -4,6 +4,7 @@ import (
 	"github.com/kfchen81/beego/vanilla"
 	"teamdo/rest/comment"
 	"teamdo/rest/dev"
+	"teamdo/rest/lane"
 	"teamdo/rest/login"
 	"teamdo/rest/project"
 )
@@ -14,5 +15,8 @@ func init() {
 	vanilla.Router(&login.LoginUser{})
 	vanilla.Router(&project.Project{})
 	vanilla.Router(&project.Projects{})
-	vanilla.Router(&project.ProjectAddManager{})
+	vanilla.Router(&project.ProjectManager{})
+	vanilla.Router(&project.ProjectMember{})
+	vanilla.Router(&lane.Lane{})
+	vanilla.Router(&lane.Lanes{})
 }

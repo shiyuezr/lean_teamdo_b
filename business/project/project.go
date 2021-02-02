@@ -43,7 +43,7 @@ func (this *Project) Delete() {
 	}
 }
 
-func (this *Project) AddManager(uid int ) *Project{
+func (this *Project) AddManager(uid int) *Project {
 	dbModel := &m_project.ProjectToAdministrators{
 		ProjectId:       this.Id,
 		AdministratorId: uid,
@@ -52,6 +52,45 @@ func (this *Project) AddManager(uid int ) *Project{
 	if err != nil {
 		beego.Error(err)
 		panic(vanilla.NewSystemError("create:failed", "创建失败"))
+	}
+	return this
+}
+
+func (this *Project) DeleteManager(uid int) *Project {
+	filter := vanilla.Map{
+		"ProjectId":       this.Id,
+		"AdministratorId": uid,
+	}
+	_, err := vanilla.GetOrmFromContext(this.Ctx).QueryTable(&m_project.ProjectToAdministrators{}).Filter(filter).Delete()
+	if err != nil {
+		beego.Error(err)
+		panic(vanilla.NewSystemError("Delete:failed", "删除失败"))
+	}
+	return this
+}
+
+func (this *Project) AddMember(uid int) *Project {
+	dbModel := &m_project.ProjectToParticipants{
+		ProjectId:     this.Id,
+		ParticipantId: uid,
+	}
+	_, err := vanilla.GetOrmFromContext(this.Ctx).Insert(dbModel)
+	if err != nil {
+		beego.Error(err)
+		panic(vanilla.NewSystemError("create:failed", "创建失败"))
+	}
+	return this
+}
+
+func (this *Project) DeleteMember(uid int) *Project {
+	filter := vanilla.Map{
+		"ProjectId":     this.Id,
+		"ParticipantId": uid,
+	}
+	_, err := vanilla.GetOrmFromContext(this.Ctx).QueryTable(&m_project.ProjectToParticipants{}).Filter(filter).Delete()
+	if err != nil {
+		beego.Error(err)
+		panic(vanilla.NewSystemError("Delete:failed", "删除失败"))
 	}
 	return this
 }

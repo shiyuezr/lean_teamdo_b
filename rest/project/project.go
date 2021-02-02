@@ -2,6 +2,7 @@ package project
 
 import (
 	"github.com/kfchen81/beego/vanilla"
+	b_account "teamdo/business/account"
 	b_project "teamdo/business/project"
 )
 
@@ -54,6 +55,8 @@ func (this *Project) Put() {
 	bCtx := this.GetBusinessContext()
 
 	project := b_project.NewProject(bCtx, name, content)
+	project.AddManager(b_account.GetUserFromContext(bCtx).Id)
+	project.AddMember(b_account.GetUserFromContext(bCtx).Id)
 	response := vanilla.MakeResponse(vanilla.Map{
 		"id": project.Id,
 	})
