@@ -23,8 +23,8 @@ func (this *EncodeTunnelService) Encode(tunnel *Tunnel) *b_project.RTunnel {
 	}
 
 	rTasks := make([]*b_project.RTask, 0)
-	if len(tunnel.Task) != 0 {
-		for _, task := range tunnel.Task {
+	if len(tunnel.Tasks) != 0 {
+		for _, task := range tunnel.Tasks {
 			rTasks = append(rTasks, b_task.NewEncodeTaskService(this.Ctx).Encode(task))
 		}
 	}
@@ -32,7 +32,7 @@ func (this *EncodeTunnelService) Encode(tunnel *Tunnel) *b_project.RTunnel {
 	return &b_project.RTunnel{
 		Id: tunnel.Id,
 		Title: tunnel.Title,
-		Task: rTasks,
+		Tasks: rTasks,
 	}
 }
 

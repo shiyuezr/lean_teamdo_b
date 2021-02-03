@@ -22,12 +22,14 @@ func (this *EncodeTaskService) Encode(task *Task) *b_project.RTask {
 	}
 
 	return &b_project.RTask{
+		Id: task.Id,
 		Title: task.Title,
 		Status: task.Status,
 		Remark: task.Remark,
 		Priority: task.Priority,
 		StartDate: task.StartDate,
 		EndDate: task.EndDate,
+		ExecutorId: task.ExecutorId,
 	}
 }
 

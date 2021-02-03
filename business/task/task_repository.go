@@ -29,7 +29,7 @@ func (this *TaskRepository) GetTasksByTunnelIds(tunnelIds []int) []*Task {
 	}
 	filters := vanilla.Map{
 		"tunnel_id__in": tunnelIds,
-		"is_delete": false,
+		"is_deleted": false,
 	}
 	tasks := this.GetByFilters(filters)
 	return tasks
@@ -37,7 +37,7 @@ func (this *TaskRepository) GetTasksByTunnelIds(tunnelIds []int) []*Task {
 
 func (this *TaskRepository) GetByFilters(filters vanilla.Map) []*Task {
 	o := vanilla.GetOrmFromContext(this.Ctx)
-	qs := o.QueryTable(&m_project.Project{})
+	qs := o.QueryTable(&m_project.Task{})
 
 	var models  []*m_project.Task
 	if len(filters) > 0 {

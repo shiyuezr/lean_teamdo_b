@@ -1,7 +1,6 @@
 package project
 
 import (
-	"github.com/kfchen81/beego"
 	"github.com/kfchen81/beego/vanilla"
 	_ "teamdo/business/account"
 	b_project "teamdo/business/project"
@@ -28,7 +27,6 @@ func (this *Project) GetParameters() map[string][]string {
 }
 
 func (this *Project) Get()  {
-	beego.Info("打印出来")
 	bCtx := this.GetBusinessContext()
 
 	id, _ := this.GetInt("id")
@@ -50,8 +48,8 @@ func (this *Project) Put()  {
 
 	userId, _ := this.GetInt("user_id")
 	projectName := this.GetString("project_name")
-	b_project.NewProject(bCtx, userId, projectName)
-
+	project := b_project.NewProject(bCtx, userId, projectName)
+	project.AddMember(userId)
 	response := vanilla.MakeResponse(vanilla.Map{})
 	this.ReturnJSON(response)
 }

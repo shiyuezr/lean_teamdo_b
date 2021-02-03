@@ -2,6 +2,7 @@ package tunnel
 
 import (
 	"github.com/kfchen81/beego/vanilla"
+	_ "teamdo/business/account"
 	b_tunnel "teamdo/business/tunnel"
 )
 
@@ -18,6 +19,10 @@ func (this *SortedTunnel) GetParameters() map[string][]string {
 		"PUT": []string{
 			"ids:json-array",
 		},
+		"POST": []string{
+			"id:int",
+			"action",
+		},
 	}
 }
 
@@ -28,6 +33,18 @@ func (this *SortedTunnel) Put()  {
 	if len(ids) > 1 {
 		b_tunnel.NewTunnelRepository(bCtx).SortedTunnel(ids)
 	}
+
+	response := vanilla.MakeResponse(vanilla.Map{})
+	this.ReturnJSON(response)
+}
+
+func (this *SortedTunnel) Post()  {
+	bCtx := this.GetBusinessContext()
+	id, _ := this.GetInt("id")
+	action := this.GetString("action")
+
+	tunnel := b_tunnel.NewTunnelRepository(bCtx).GetTunnelById(id)
+	tunnel.Sorted(action)
 
 	response := vanilla.MakeResponse(vanilla.Map{})
 	this.ReturnJSON(response)

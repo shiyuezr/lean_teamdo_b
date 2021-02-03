@@ -2,6 +2,7 @@ package task
 
 import (
 	"github.com/kfchen81/beego/vanilla"
+	_ "teamdo/business/account"
 	task2 "teamdo/business/task"
 )
 

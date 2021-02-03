@@ -22,6 +22,7 @@ func (this *EncodeMemberService) Encode(member *ProjectMember) *b_user.RMember {
 	}
 
 	return &b_user.RMember{
+		Id: member.Id,
 		Name: member.UserName,
 	}
 }

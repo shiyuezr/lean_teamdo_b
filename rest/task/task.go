@@ -2,8 +2,9 @@ package task
 
 import (
 	"github.com/kfchen81/beego/vanilla"
-	task2 "teamdo/business/task"
-	tunnel2 "teamdo/business/tunnel"
+	_ "teamdo/business/account"
+	b_task "teamdo/business/task"
+	b_tunnel "teamdo/business/tunnel"
 )
 
 type Task struct {
@@ -18,7 +19,6 @@ func (this *Task) GetParameters() map[string][]string {
 	return map[string][]string{
 		"GET": []string{"id:int"},
 		"PUT": []string{
-			"manager_id:int",
 			"tunnel_id:int",
 			"?executor_id:int",
 			"start_date",
@@ -30,6 +30,7 @@ func (this *Task) GetParameters() map[string][]string {
 		"POST": []string{
 			"id:int",
 			"remark",
+			"title",
 		},
 		"DELETE": []string{
 			"id:int",
@@ -42,8 +43,8 @@ func (this *Task) Get()  {
 
 	id, _ := this.GetInt("id")
 
-	task := task2.NewTaskRepository(bCtx).GetTaskById(id)
-	data := task2.NewEncodeTaskService(bCtx).Encode(task)
+	task := b_task.NewTaskRepository(bCtx).GetTaskById(id)
+	data := b_task.NewEncodeTaskService(bCtx).Encode(task)
 
 	response := vanilla.MakeResponse(vanilla.Map{
 		"task": data,
@@ -62,8 +63,8 @@ func (this *Task) Put()  {
 	startDateStr := this.GetString("start_date")
 	endDateStr := this.GetString("end_date")
 
-	tunnel := tunnel2.NewTunnelRepository(bCtx).GetTunnelById(tunnelId)
-	taskParams := tunnel2.NewTaskParams(executorId, title, remark, priority, startDateStr, endDateStr)
+	tunnel := b_tunnel.NewTunnelRepository(bCtx).GetTunnelById(tunnelId)
+	taskParams := b_tunnel.NewTaskParams(executorId, title, remark, priority, startDateStr, endDateStr)
 	tunnel.AddTask(taskParams)
 
 	response := vanilla.MakeResponse(vanilla.Map{})
@@ -75,9 +76,10 @@ func (this *Task) Post()  {
 
 	id, _ := this.GetInt("id")
 	remark := this.GetString("remark")
+	title := this.GetString("title")
 
-	task := task2.NewTaskRepository(bCtx).GetTaskById(id)
-	task.Update(remark)
+	task := b_task.NewTaskRepository(bCtx).GetTaskById(id)
+	task.Update(remark, title)
 
 	response := vanilla.MakeResponse(vanilla.Map{})
 	this.ReturnJSON(response)
@@ -87,7 +89,7 @@ func (this *Task) Delete()  {
 	bCtx := this.GetBusinessContext()
 
 	id, _ := this.GetInt("id")
-	task := task2.NewTaskRepository(bCtx).GetTaskById(id)
+	task := b_task.NewTaskRepository(bCtx).GetTaskById(id)
 	task.Delete()
 
 	response := vanilla.MakeResponse(vanilla.Map{})

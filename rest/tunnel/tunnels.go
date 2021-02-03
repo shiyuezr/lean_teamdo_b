@@ -2,6 +2,7 @@ package tunnel
 
 import (
 	"github.com/kfchen81/beego/vanilla"
+	_ "teamdo/business/account"
 	"teamdo/business/tunnel"
 )
 
@@ -27,7 +28,7 @@ func (this *Tunnels) Get()  {
 
 	tunnels := tunnel.NewTunnelRepository(bCtx).GetTunnelsByProjectId(projectId)
 
-	tunnel.NewFillTunnelsService(bCtx).Fill(tunnels, vanilla.FillOption{"with_options": true})
+	tunnel.NewFillTunnelsService(bCtx).Fill(tunnels, vanilla.FillOption{"with_tasks": true})
 	rTunnels := tunnel.NewEncodeTunnelService(bCtx).EncodeMany(tunnels)
 
 	response := vanilla.MakeResponse(rTunnels)

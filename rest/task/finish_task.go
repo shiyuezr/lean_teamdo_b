@@ -2,6 +2,7 @@ package task
 
 import (
 	"github.com/kfchen81/beego/vanilla"
+	_ "teamdo/business/account"
 	task2 "teamdo/business/task"
 )
 
@@ -27,7 +28,7 @@ func (this *FinishTask) GetParameters() map[string][]string {
 func (this *FinishTask) Put()  {
 	bCtx := this.GetBusinessContext()
 
-	id, _ := this.GetInt("id")
+	id, _ := this.GetInt("task_id")
 	task := task2.NewTaskRepository(bCtx).GetTaskById(id)
 	task.CompleteTask()
 

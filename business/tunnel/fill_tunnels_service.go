@@ -26,7 +26,7 @@ func (this *FillTunnelsService) Fill(tunnels []*Tunnel, option vanilla.FillOptio
 		tunnelIds = append(tunnelIds, tunnel.Id)
 	}
 
-	if enableOption, ok := option["with_tunnel"]; ok && enableOption {
+	if enableOption, ok := option["with_tasks"]; ok && enableOption {
 		this.FillTasks(tunnels)
 	}
 }
@@ -39,14 +39,14 @@ func (this *FillTunnelsService) FillTasks(tunnels []*Tunnel)  {
 	tasks := b_task.NewTaskRepository(this.Ctx).GetTasksByTunnelIds(tunnelIds)
 	tunnelId2tasks :=make(map[int][]*b_task.Task)
 	for _, task := range tasks {
-		if exitTask, ok := tunnelId2tasks[task.Id]; ok {
-			tunnelId2tasks[task.Id] = append(exitTask, task)
+		if exitTask, ok := tunnelId2tasks[task.TunnelId]; ok {
+			tunnelId2tasks[task.TunnelId] = append(exitTask, task)
 		} else {
-			tunnelId2tasks[task.Id] = []*b_task.Task{task}
+			tunnelId2tasks[task.TunnelId] = []*b_task.Task{task}
 		}
 	}
 
 	for _, tunnel := range tunnels {
-		tunnel.Task = tunnelId2tasks[tunnel.Id]
+		tunnel.Tasks = tunnelId2tasks[tunnel.Id]
 	}
 }

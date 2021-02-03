@@ -2,6 +2,7 @@ package task
 
 import (
 	"github.com/kfchen81/beego/vanilla"
+	_ "teamdo/business/account"
 	task2 "teamdo/business/task"
 )
 
@@ -17,7 +18,7 @@ func (this *TaskPriority) GetParameters() map[string][]string {
 	return map[string][]string{
 		"POST": []string{
 			"task_id:int",
-			"priority: int",
+			"priority: sting",
 		},
 	}
 }

@@ -48,6 +48,8 @@ func (this *TunnelRepository) GetByFilters(filters vanilla.Map, orderExprs ...st
 
 	if len(orderExprs) > 0 {
 		qs = qs.OrderBy(orderExprs...)
+	} else {
+		qs = qs.OrderBy("display_index")
 	}
 	var models []*m_project.Tunnel
 	_, err := qs.All(&models)
