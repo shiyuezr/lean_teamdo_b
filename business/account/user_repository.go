@@ -30,6 +30,17 @@ func (this *UserRepository) GetByFilters(filters vanilla.Map) []*User {
 	return Users
 }
 
+func(this *UserRepository) GetById(id int) *User {
+	filters := vanilla.Map{
+		"id" : id,
+	}
+	users := this.GetByFilters(filters)
+	if len(users) == 0 {
+		return nil
+	}
+	return users[0]
+}
+
 func NewUserRepository(ctx context.Context) *UserRepository {
 	repository := new(UserRepository)
 	repository.Ctx = ctx

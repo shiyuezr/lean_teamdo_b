@@ -7,6 +7,7 @@ import (
 	"teamdo/rest/lane"
 	"teamdo/rest/login"
 	"teamdo/rest/project"
+	"teamdo/rest/task"
 )
 
 func init() {
@@ -19,4 +20,5 @@ func init() {
 	vanilla.Router(&project.ProjectMember{})
 	vanilla.Router(&lane.Lane{})
 	vanilla.Router(&lane.Lanes{})
+	vanilla.Router(&task.Task{})
 }
