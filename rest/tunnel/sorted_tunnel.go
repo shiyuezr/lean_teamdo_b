@@ -2,6 +2,7 @@ package tunnel
 
 import (
 	"github.com/kfchen81/beego/vanilla"
+	_ "teamdo/business/account"
 	b_tunnel "teamdo/business/tunnel"
 )
 
