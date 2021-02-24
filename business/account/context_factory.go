@@ -2,9 +2,7 @@ package account
 
 import (
 	"context"
-
 	"github.com/bitly/go-simplejson"
-
 	"github.com/kfchen81/beego"
 	"github.com/kfchen81/beego/vanilla/middleware"
 	"net/http"

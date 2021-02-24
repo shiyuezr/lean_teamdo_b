@@ -9,6 +9,10 @@ type UnFinishTask struct {
 	vanilla.RestResource
 }
 
+func (this *UnFinishTask) Resource() string {
+	return "project.unFinish_task"
+}
+
 func (this *UnFinishTask) GetParameters() map[string][]string {
 	return map[string][]string{
 		"PUT": []string{

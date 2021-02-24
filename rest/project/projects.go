@@ -2,7 +2,6 @@ package project
 
 import (
 	"github.com/kfchen81/beego/vanilla"
-	_ "teamdo/business/account"
 	b_project "teamdo/business/project"
 )
 

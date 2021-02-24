@@ -10,7 +10,7 @@ type FinishTask struct {
 }
 
 func (this *FinishTask) Resource() string {
-	return "project.task_status"
+	return "project.finish_task"
 }
 
 func (this *FinishTask) GetParameters() map[string][]string {
