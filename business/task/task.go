@@ -5,6 +5,7 @@ import (
 	"github.com/kfchen81/beego"
 	"github.com/kfchen81/beego/orm"
 	"github.com/kfchen81/beego/vanilla"
+	"strings"
 	m_project "teamdo/models/project"
 )
 
@@ -46,7 +47,7 @@ func (this *Task) UpdateTitle(title string)  {
 	}
 }
 
-func (this *Task) CompleteTask()  {
+func (this *Task) FinishTask()  {
 	o := vanilla.GetOrmFromContext(this.Ctx)
 	
 	_, err := o.QueryTable(&m_project.Task{}).Filter(vanilla.Map{"id": this.Id}).Update(orm.Params{
@@ -59,7 +60,7 @@ func (this *Task) CompleteTask()  {
 	}
 }
 
-func (this *Task) FailToFinishTask()  {
+func (this *Task) UnFinishTask()  {
 	o := vanilla.GetOrmFromContext(this.Ctx)
 
 	_, err := o.QueryTable(&m_project.Task{}).Filter(vanilla.Map{"id": this.Id}).Update(orm.Params{
@@ -99,11 +100,12 @@ func (this *Task) UpdateExecutor(userId int)  {
 	}
 }
 
-func (this *Task) Update(remark string)  {
+func (this *Task) Update(remark string, title string)  {
 	o := vanilla.GetOrmFromContext(this.Ctx)
 
 	_, err := o.QueryTable(&m_project.Task{}).Filter(vanilla.Map{"id": this.Id}).Update(orm.Params{
 		"remark": remark,
+		"title": title,
 	})
 
 	if err != nil {
@@ -120,5 +122,9 @@ func NewTaskForModel(ctx context.Context, dbModel *m_project.Task) *Task {
 	instance.Status = dbModel.Status
 	instance.Priority = m_project.PRIOTITY_TYPE2CODE[dbModel.Priority]
 	instance.Remark = dbModel.Remark
+	instance.TunnelId = dbModel.TunnelId
+	instance.ExecutorId = dbModel.ExecutorId
+	instance.StartDate = strings.ReplaceAll(dbModel.StartDate.Format("2006-01-02 15:04:05"), "-", "/")
+	instance.EndDate = strings.ReplaceAll(dbModel.EndDate.Format("2006-01-02 15:04:05"), "-", "/")
 	return instance
 }

@@ -18,5 +18,6 @@ func NewUserForModel(ctx context.Context, dbModel *m_user.User) *User {
 	instance.Ctx = ctx
 	instance.UserName = dbModel.UserName
 	instance.Password = dbModel.Password
+	instance.Id = dbModel.Id
 	return instance
 }

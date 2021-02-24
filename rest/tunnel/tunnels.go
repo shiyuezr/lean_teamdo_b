@@ -2,7 +2,7 @@ package tunnel
 
 import (
 	"github.com/kfchen81/beego/vanilla"
-	"teamdo/business/tunnel"
+	b_tunnel "teamdo/business/tunnel"
 )
 
 type Tunnels struct {
@@ -25,10 +25,10 @@ func (this *Tunnels) Get()  {
 	bCtx := this.GetBusinessContext()
 	projectId, _ := this.GetInt("project_id")
 
-	tunnels := tunnel.NewTunnelRepository(bCtx).GetTunnelsByProjectId(projectId)
+	tunnels := b_tunnel.NewTunnelRepository(bCtx).GetTunnelsByProjectId(projectId)
 
-	tunnel.NewFillTunnelsService(bCtx).Fill(tunnels, vanilla.FillOption{"with_options": true})
-	rTunnels := tunnel.NewEncodeTunnelService(bCtx).EncodeMany(tunnels)
+	b_tunnel.NewFillTunnelsService(bCtx).Fill(tunnels, vanilla.FillOption{"with_tasks": true})
+	rTunnels := b_tunnel.NewEncodeTunnelService(bCtx).EncodeMany(tunnels)
 
 	response := vanilla.MakeResponse(rTunnels)
 	this.ReturnJSON(response)

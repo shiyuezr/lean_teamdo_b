@@ -2,7 +2,7 @@ package task
 
 import (
 	"github.com/kfchen81/beego/vanilla"
-	task2 "teamdo/business/task"
+	b_task "teamdo/business/task"
 )
 
 type TaskExecutor struct {
@@ -27,7 +27,7 @@ func (this *TaskExecutor) Post()  {
 
 	id, _ := this.GetInt("task_id")
 	userId, _ := this.GetInt("user_id")
-	task := task2.NewTaskRepository(bCtx).GetTaskById(id)
+	task := b_task.NewTaskRepository(bCtx).GetTaskById(id)
 	task.UpdateExecutor(userId)
 
 	response := vanilla.MakeResponse(vanilla.Map{})

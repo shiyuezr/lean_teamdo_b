@@ -10,7 +10,7 @@ type RTunnel struct {
 	Id 	int		`json:"id"`
 	Title	string	`json:"title"`
 	DisplayIndex	int	`json:"display_index"`
-	Task 	[]*RTask 	`json:"task"`
+	Tasks 	[]*RTask 	`json:"tasks"`
 }
 
 type RTask struct {
@@ -20,6 +20,7 @@ type RTask struct {
 	Status bool 	`json:"status"`
 	Remark string 	`json:"remark"`
 	Priority string `json:"priority"`
-	StartDate string	`json:"star_date"`
+	StartDate string	`json:"start_date"`
 	EndDate	string	`json:"end_date"`
+	ExecutorId int 	`json:"executor_id"`
 }

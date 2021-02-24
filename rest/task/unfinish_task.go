@@ -5,15 +5,11 @@ import (
 	b_task "teamdo/business/task"
 )
 
-type FinishTask struct {
+type UnFinishTask struct {
 	vanilla.RestResource
 }
 
-func (this *FinishTask) Resource() string {
-	return "project.task_status"
-}
-
-func (this *FinishTask) GetParameters() map[string][]string {
+func (this *UnFinishTask) GetParameters() map[string][]string {
 	return map[string][]string{
 		"PUT": []string{
 			"task_id:int",
@@ -21,12 +17,12 @@ func (this *FinishTask) GetParameters() map[string][]string {
 	}
 }
 
-func (this *FinishTask) Put()  {
+func (this *UnFinishTask) Put()  {
 	bCtx := this.GetBusinessContext()
 
 	id, _ := this.GetInt("task_id")
 	task := b_task.NewTaskRepository(bCtx).GetTaskById(id)
-	task.FinishTask()
+	task.UnFinishTask()
 
 	response := vanilla.MakeResponse(vanilla.Map{})
 	this.ReturnJSON(response)

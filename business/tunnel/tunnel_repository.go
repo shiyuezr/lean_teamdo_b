@@ -18,7 +18,7 @@ func NewTunnelRepository(ctx context.Context) *TunnelRepository {
 	return repository
 }
 
-func (this *TunnelRepository) SortedTunnel(ids []int)  {
+func (this *TunnelRepository) SortTunnels(ids []int)  {
 	index := 0
 	for _, id := range ids {
 		this.UpdateDisplayIndex(id, index)
@@ -48,6 +48,8 @@ func (this *TunnelRepository) GetByFilters(filters vanilla.Map, orderExprs ...st
 
 	if len(orderExprs) > 0 {
 		qs = qs.OrderBy(orderExprs...)
+	} else {
+		qs = qs.OrderBy("display_index")
 	}
 	var models []*m_project.Tunnel
 	_, err := qs.All(&models)

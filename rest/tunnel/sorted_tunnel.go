@@ -26,7 +26,7 @@ func (this *SortedTunnel) Put()  {
 	ids := this.GetIntArray("ids")
 
 	if len(ids) > 1 {
-		b_tunnel.NewTunnelRepository(bCtx).SortedTunnel(ids)
+		b_tunnel.NewTunnelRepository(bCtx).SortTunnels(ids)
 	}
 
 	response := vanilla.MakeResponse(vanilla.Map{})

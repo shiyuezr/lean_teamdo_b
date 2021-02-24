@@ -6,6 +6,7 @@ import (
 	"github.com/kfchen81/beego"
 	"github.com/kfchen81/beego/orm"
 	"github.com/kfchen81/beego/vanilla"
+	"strings"
 	"teamdo/business/constant"
 	b_task "teamdo/business/task"
 	m_project "teamdo/models/project"
@@ -21,7 +22,7 @@ type Tunnel struct {
 	CreateAt    time.Time
 	DisplayIndex int
 
-	Task        []*b_task.Task
+	Tasks        []*b_task.Task
 }
 
 type TaskParams struct {
@@ -48,6 +49,7 @@ func (this *Tunnel) AddTask(taskParams *TaskParams)  {
 	o := vanilla.GetOrmFromContext(this.Ctx)
 
 	model := m_project.Task{}
+	model.TunnelId = this.Id
 	model.Title = taskParams.Title
 	model.Remark = taskParams.Remark
 	model.Priority = m_project.TASK_PRIOTITY_TYPE_CODE2PRIOTITY_TYPE[taskParams.Priority]
@@ -90,8 +92,15 @@ func NewTaskParams(
 	startDateStr string,
 	endDateStr 	string,
 	) *TaskParams {
-	startDate, _ := time.ParseInLocation(constant.DATE_LAYOUT, startDateStr, time.Local)
-	endDate, _ := time.ParseInLocation(constant.DATE_LAYOUT, endDateStr, time.Local)
+	startDate, _ := time.ParseInLocation(
+		constant.TIME_LAYOUT,
+		strings.ReplaceAll(startDateStr, "/", "-"),
+		time.Local)
+	endDate, _ := time.ParseInLocation(
+		constant.TIME_LAYOUT,
+		strings.ReplaceAll(endDateStr, "/", "-"),
+		time.Local)
+	beego.Info("7878787&*&*",startDate, "*&*&*")
 	return &TaskParams{
 		ExecutorId: executorId,
 		Title: title,

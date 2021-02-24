@@ -21,6 +21,7 @@ func init() {
 	vanilla.Router(&task.TaskTitle{})
 	vanilla.Router(&task.TaskPriority{})
 	vanilla.Router(&task.FinishTask{})
+	vanilla.Router(&tunnel.SortedTunnel{})
 
 	vanilla.Router(&tunnel.Tunnel{})
 	vanilla.Router(&tunnel.Tunnels{})

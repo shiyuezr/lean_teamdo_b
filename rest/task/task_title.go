@@ -2,7 +2,7 @@ package task
 
 import (
 	"github.com/kfchen81/beego/vanilla"
-	task2 "teamdo/business/task"
+	b_task "teamdo/business/task"
 )
 
 type TaskTitle struct {
@@ -27,7 +27,7 @@ func (this *TaskTitle) Post()  {
 
 	id, _ := this.GetInt("task_id")
 	title := this.GetString("title")
-	task := task2.NewTaskRepository(bCtx).GetTaskById(id)
+	task := b_task.NewTaskRepository(bCtx).GetTaskById(id)
 
 	task.UpdateTitle(title)
 

@@ -10,7 +10,7 @@ type ProjectMember struct {
 	b_user.User
 }
 
-func NewProjectMemberForModel(ctx context.Context, dbModel *m_user.Member) *ProjectMember {
+func NewProjectMemberForModel(ctx context.Context, dbModel *m_user.User) *ProjectMember {
 	instance := new(ProjectMember)
 	instance.Ctx = ctx
 	instance.Id = dbModel.Id

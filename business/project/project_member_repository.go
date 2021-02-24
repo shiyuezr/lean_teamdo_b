@@ -58,9 +58,9 @@ func (this *Member) GetMembersByIds(ids []int) []*ProjectMember {
 
 func (this *Member) GetByFilters(filters vanilla.Map) []*ProjectMember {
 	o := vanilla.GetOrmFromContext(this.Ctx)
-	qs := o.QueryTable(&m_user.Member{})
+	qs := o.QueryTable(&m_user.User{})
 
-	var models []*m_user.Member
+	var models []*m_user.User
 	if len(filters) > 0 {
 		qs = qs.Filter(filters)
 	}
