@@ -5,6 +5,7 @@ import "github.com/kfchen81/beego/orm"
 type Lane struct {
 	Id        int
 	Name      string
+	Sort      string
 	ProjectId int //foreign key Project
 }
 

@@ -41,6 +41,17 @@ func (this *ProjectRepository) GetProjectById(id int) *Project {
 	return projects[0]
 }
 
+func(this *ProjectRepository) GetProjectByIds(ids []int) []*Project {
+	filters := vanilla.Map{
+		"id__in": ids,
+	}
+	projects := this.GetByFilters(filters)
+	if len(projects) == 0 {
+		return nil
+	}
+	return projects
+}
+
 func NewProjectRepository(ctx context.Context) *ProjectRepository {
 	repository := new(ProjectRepository)
 	repository.Ctx = ctx

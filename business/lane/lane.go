@@ -12,15 +12,28 @@ import (
 
 type Lane struct {
 	vanilla.EntityBase
-	Id   int
-	Name string
+	Id        int
+	Name      string
+	Sort      string
+	ProjectId int
 
 	Project *project.Project //所属项目
 }
 
-func (this *Lane) Update(name string) {
+func (this *Lane) Update(name string, sort int) {
+
 	var model m_lane.Lane
 	o := vanilla.GetOrmFromContext(this.Ctx)
+	if sort != 0 {
+		_, err := o.QueryTable(&model).Filter("id", this.Id).Update(orm.Params{
+			"sort": sort,
+		})
+		if err != nil {
+			beego.Error(err)
+			panic(vanilla.NewBusinessError("update：fail", fmt.Sprintf("修改项目失败")))
+		}
+		return
+	}
 	_, err := o.QueryTable(&model).Filter("id", this.Id).Update(orm.Params{
 		"name": name,
 	})

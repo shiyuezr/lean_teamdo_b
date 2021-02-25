@@ -41,6 +41,17 @@ func (this *LaneRepository) GetLaneById(id int) *Lane {
 	return lanes[0]
 }
 
+func(this *LaneRepository) GetLanesByIds(ids []int) []*Lane {
+	filters := vanilla.Map{
+		"id__in": ids,
+	}
+	lanes := this.GetByFilters(filters)
+	if len(lanes) == 0 {
+		return nil
+	}
+	return lanes
+}
+
 func NewLaneRepository(ctx context.Context) *LaneRepository {
 	repository := new(LaneRepository)
 	repository.Ctx = ctx

@@ -24,6 +24,7 @@ func (this *Lane) GetParameters() map[string][]string {
 			"id:int",
 			"name:string",
 			"pid:int",
+			"sort:int",
 		},
 		"DELETE": []string{"id:int", "pid:int"},
 	}
@@ -53,6 +54,7 @@ func (this *Lane) Put() {
 	project.AuthorityVerify()
 
 	lane := b_lane.NewLane(bCtx, name, pid)
+	lane.Update(lane.Name,lane.Id)
 	response := vanilla.MakeResponse(vanilla.Map{
 		"id": lane.Id,
 	})
@@ -78,6 +80,7 @@ func (this *Lane) Delete() {
 func (this *Lane) Post() {
 	id, _ := this.GetInt("id")
 	pid, _ := this.GetInt("pid")
+	sort, _ := this.GetInt("sort")
 	name := this.GetString("name")
 	bCtx := this.GetBusinessContext()
 
@@ -86,7 +89,7 @@ func (this *Lane) Post() {
 
 	repository := b_lane.NewLaneRepository(bCtx)
 	lane := repository.GetLaneById(id)
-	lane.Update(name)
+	lane.Update(name, sort)
 
 	response := vanilla.MakeResponse(vanilla.Map{})
 	this.ReturnJSON(response)

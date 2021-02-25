@@ -2,11 +2,10 @@ package task
 
 import (
 	"context"
-	"github.com/kfchen81/beego"
 	"github.com/kfchen81/beego/vanilla"
 	b_account "teamdo/business/account"
-	m_account "teamdo/models/account"
-	m_project "teamdo/models/project"
+	b_lane "teamdo/business/lane"
+	b_project "teamdo/business/project"
 )
 
 type FillTaskService struct {
@@ -18,124 +17,80 @@ func (this *FillTaskService) FillOne(task *Task, option vanilla.FillOption) {
 }
 
 func (this *FillTaskService) Fill(tasks []*Task, option vanilla.FillOption) {
-	ids := make([]int, 0)
-	for _, task := range tasks {
-		ids = append(ids, task.Id)
-	}
-
-	if v, ok := option["with_user"]; ok && v {
-		this.fillUser(tasks, ids)
+	if v, ok := option["with_operator"]; ok && v {
+		this.fillOperator(tasks)
 	}
 	if v, ok := option["with_parent_task"]; ok && v {
-		this.fillParticipant(tasks, ids)
+		//this.fillParentTask(tasks)
 	}
 	if v, ok := option["with_lane"]; ok && v {
-		this.fillParticipant(tasks, ids)
+		this.fillLane(tasks)
 	}
 	if v, ok := option["with_project"]; ok && v {
-		this.fillParticipant(tasks, ids)
+		this.fillProject(tasks)
 	}
 }
 
-func (this *FillTaskService) fillUser(tasks []*Task, ids []int) {
-	id2entity := make(map[int]*Task)
+func (this *FillTaskService) fillOperator(tasks []*Task) {
+	operatorIds := make([]int, 0)
+	operatorId2operator := make(map[int]struct{})
+
 	for _, task := range tasks {
-		id2entity[task.Id] = task
+		if _, ok := operatorId2operator[task.OperatorId]; !ok {
+			operatorIds = append(operatorIds, task.OperatorId)
+		}
+		operatorId2operator[task.OperatorId] = struct{}{}
+	}
+	operators := b_account.NewUserRepository(this.Ctx).GetByIds(operatorIds)
+	id2operator := make(map[int]*b_account.User)
+	for _, operator := range operators{
+		id2operator[operator.Id] = operator
 	}
 
-	corps := b_account.NewUserRepository(this.Ctx).GetById(corpIds)
-	id2corp := make(map[int]*b_corp.Corp)
-	for _, corp := range corps{
-		id2corp[corp.Id] = corp
-	}
-
-	for _, store := range stores{
-		store.Corp = id2corp[store.CorpId]
+	for _, task := range tasks{
+		task.Operator = id2operator[task.OperatorId]
 	}
 }
 
-func (this *FillTaskService) fillParticipant(projects []*Task, ids []int) {
-	id2entity := make(map[int]*Task)
-	for _, project := range projects {
-		id2entity[project.Id] = project
-	}
+func (this *FillTaskService) fillLane(tasks []*Task) {
+	laneIds := make([]int, 0)
+	laneId2lane := make(map[int]struct{})
 
-	o := vanilla.GetOrmFromContext(this.Ctx)
-	var relationModels []*m_project.ProjectToParticipants
-	_, err := o.QueryTable(&m_project.ProjectToParticipants{}).Filter("project_id__in", ids).All(&relationModels)
-	if err != nil {
-		beego.Error(err)
-		return
-	}
-	if len(relationModels) == 0 {
-		return
-	}
-
-	participantIds := make([]int, 0)
-	for _, relationModel := range relationModels {
-		participantIds = append(participantIds, relationModel.ParticipantId)
-	}
-	var models []*m_account.User
-	_, err = o.QueryTable(&m_account.User{}).Filter("id__in", participantIds).All(&models)
-	if err != nil {
-		beego.Error(err)
-		return
-	}
-	id2model := make(map[int]*m_account.User)
-	for _, model := range models {
-		id2model[model.Id] = model
-	}
-
-	for _, relationModel := range relationModels {
-		projectId := relationModel.ProjectId
-		participantId := relationModel.ParticipantId
-
-		if project, ok := id2entity[projectId]; ok {
-			if model, ok2 := id2model[participantId]; ok2 {
-				project.Participants = append(project.Participants, b_account.NewUserFromModel(this.Ctx, model))
-			}
+	for _, task := range tasks {
+		if _, ok := laneId2lane[task.LaneId]; !ok {
+			laneIds = append(laneIds, task.LaneId)
 		}
+		laneId2lane[task.LaneId] = struct{}{}
+	}
+	lanes := b_lane.NewLaneRepository(this.Ctx).GetLanesByIds(laneIds)
+	id2lane := make(map[int]*b_lane.Lane)
+	for _, lane := range lanes{
+		id2lane[lane.Id] = lane
+	}
+
+	for _, task := range tasks{
+		task.Lane = id2lane[task.LaneId]
 	}
 }
 
-func (this *FillTaskService) fillAdministrator(projects []*Task, ids []int) {
-	id2entity := make(map[int]*Task)
-	for _, project := range projects {
-		id2entity[project.Id] = project
-	}
-	o := vanilla.GetOrmFromContext(this.Ctx)
-	var relationModels []*m_project.ProjectToAdministrators
-	_, err := o.QueryTable(&m_project.ProjectToAdministrators{}).Filter("project_id__in", ids).All(&relationModels)
-	if err != nil {
-		beego.Error(err)
-		return
-	}
-	if len(relationModels) == 0 {
-		return
-	}
-	administratorIds := make([]int, 0)
-	for _, relationModel := range relationModels {
-		administratorIds = append(administratorIds, relationModel.AdministratorId)
-	}
-	var models []*m_account.User
-	_, err = o.QueryTable(&m_account.User{}).Filter("id__in", administratorIds).All(&models)
-	if err != nil {
-		beego.Error(err)
-		return
-	}
-	id2model := make(map[int]*m_account.User)
-	for _, model := range models {
-		id2model[model.Id] = model
-	}
-	for _, relationModel := range relationModels {
-		projectId := relationModel.ProjectId
-		administratorId := relationModel.AdministratorId
+func (this *FillTaskService) fillProject(tasks []*Task) {
+	projectIds := make([]int, 0)
+	projectId2project := make(map[int]struct{})
 
-		if project, ok := id2entity[projectId]; ok {
-			if model, ok2 := id2model[administratorId]; ok2 {
-				project.Administrators = append(project.Administrators, b_account.NewUserFromModel(this.Ctx, model))
-			}
+	for _, task := range tasks {
+		if _, ok := projectId2project[task.ProjectId]; !ok {
+			projectIds = append(projectIds, task.ProjectId)
 		}
+		projectId2project[task.ProjectId] = struct{}{}
+	}
+	projects := b_project.NewProjectRepository(this.Ctx).GetProjectByIds(projectIds)
+	id2project := make(map[int]*b_project.Project)
+	for _, operator := range projects{
+		id2project[operator.Id] = operator
+	}
+
+	for _, task := range tasks{
+		task.Project = id2project[task.ProjectId]
 	}
 }
 

@@ -2,8 +2,10 @@ package task
 
 import (
 	"github.com/kfchen81/beego/vanilla"
+	b_account "teamdo/business/account"
 	b_project "teamdo/business/project"
 	b_task "teamdo/business/task"
+	b_task_operation_log "teamdo/business/task_operation_log"
 )
 
 type Task struct {
@@ -20,10 +22,9 @@ func (this *Task) GetParameters() map[string][]string {
 		"PUT": []string{
 			"content:string",
 			"project_id:int",
-			"?status:int",
-			"?user_id:int",
+			"lane_id:int",
+			"?operator_id:int",
 			"?parent_task_id:int",
-			"?lane_id:int",
 		},
 		"POST": []string{
 			"id:int",
@@ -31,7 +32,7 @@ func (this *Task) GetParameters() map[string][]string {
 			"?content:string",
 			"?status:int",
 			"?lane_id:int",
-			"?user_id:int",
+			"?operator_id:int",
 		},
 		"DELETE": []string{"id:int", "project_id"},
 	}
@@ -56,18 +57,18 @@ func (this *Task) Get() {
 
 func (this *Task) Put() {
 	content := this.GetString("content")
-	pid, _ := this.GetInt("project_id")
-	status, _ := this.GetInt("status")
-	user_id, _ := this.GetInt("user_id")
-	parent_task_id, _ := this.GetInt("parent_task_id")
-	lane_id, _ := this.GetInt("lane_id")
-	project_id, _ := this.GetInt("project_id")
+	projectId, _ := this.GetInt("project_id")
+	laneId, _ := this.GetInt("lane_id")
+	operatorId, _ := this.GetInt("operator_id")
+	parentTaskId, _ := this.GetInt("parent_task_id")
 	bCtx := this.GetBusinessContext()
+	userId := b_account.GetUserFromContext(bCtx).Id
 
-	project := b_project.NewProjectRepository(bCtx).GetProjectById(pid)
+	project := b_project.NewProjectRepository(bCtx).GetProjectById(projectId)
 	project.AuthorityVerify()
 
-	task := b_task.NewTask(bCtx, content, status, user_id, parent_task_id, lane_id, project_id)
+	task := b_task.NewTask(bCtx, content, operatorId, parentTaskId, laneId, projectId)
+	b_task_operation_log.NewTaskOperationLog(bCtx, "创建", task.Id, userId)
 	response := vanilla.MakeResponse(vanilla.Map{
 		"id": task.Id,
 	})
@@ -75,37 +76,41 @@ func (this *Task) Put() {
 }
 
 func (this *Task) Delete() {
-	//id, _ := this.GetInt("id")
-	//pid, _ := this.GetInt("project_id")
-	//bCtx := this.GetBusinessContext()
-	//
-	//project := b_project.NewProjectRepository(bCtx).GetProjectById(pid)
-	//project.AuthorityVerify()
-	//task := b_task.NewTaskRepository(bCtx).GetTaskById(id)
-	//task.Delete()
-	//
-	//response := vanilla.MakeResponse(vanilla.Map{
-	//	"id": id,
-	//})
-	//this.ReturnJSON(response)
+	id, _ := this.GetInt("id")
+	pid, _ := this.GetInt("project_id")
+	bCtx := this.GetBusinessContext()
+	userId := b_account.GetUserFromContext(bCtx).Id
+
+	project := b_project.NewProjectRepository(bCtx).GetProjectById(pid)
+	// 只有任务的管理员才可以删除项目下的任务
+	project.AuthorityVerify()
+	task := b_task.NewTaskRepository(bCtx).GetTaskById(id)
+	task.Delete()
+	b_task_operation_log.NewTaskOperationLog(bCtx, "删除", task.Id, userId)
+	response := vanilla.MakeResponse(vanilla.Map{
+		"id": id,
+	})
+	this.ReturnJSON(response)
 }
 
 func (this *Task) Post() {
-	//id, _ := this.GetInt("id")
-	//pid, _ := this.GetInt("project_id")
-	//status, _ := this.GetInt("status")
-	//content := this.GetString("content")
-	//lane_id, _ := this.GetInt("lane_id")
-	//user_id, _ := this.GetInt("user_id")
-	//bCtx := this.GetBusinessContext()
-	//
-	//project := b_project.NewProjectRepository(bCtx).GetProjectById(pid)
-	//project.AuthorityVerify()
-	//
-	//repository := b_lane.NewLaneRepository(bCtx)
-	//lane := repository.GetLaneById(id)
-	//lane.Update(name)
-	//
-	//response := vanilla.MakeResponse(vanilla.Map{})
-	//this.ReturnJSON(response)
+	id, _ := this.GetInt("id")
+	pid, _ := this.GetInt("project_id")
+	status, _ := this.GetInt("status")
+	content := this.GetString("content")
+	laneId, _ := this.GetInt("lane_id")
+	operatorId, _ := this.GetInt("operator_id")
+	bCtx := this.GetBusinessContext()
+	userId := b_account.GetUserFromContext(bCtx).Id
+
+	project := b_project.NewProjectRepository(bCtx).GetProjectById(pid)
+	project.AuthorityVerify()
+
+	repository := b_task.NewTaskRepository(bCtx)
+	task := repository.GetTaskById(id)
+	task.Update(status, content, laneId, operatorId)
+	b_task_operation_log.NewTaskOperationLog(bCtx, "修改", task.Id, userId)
+
+	response := vanilla.MakeResponse(vanilla.Map{})
+	this.ReturnJSON(response)
 }
