@@ -128,6 +128,9 @@ type Ormer interface {
 	//	// update user testing's name to slene
 	Raw(query string, args ...interface{}) RawSeter
 	Driver() Driver
+	SetData(key string, value string)
+	GetData(key string) string
+	CopyDataTo(otherO Ormer)
 }
 
 // Inserter insert prepared statement

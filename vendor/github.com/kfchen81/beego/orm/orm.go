@@ -58,10 +58,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/opentracing/opentracing-go"
 	"os"
 	"reflect"
 	"time"
-	"github.com/opentracing/opentracing-go"
 )
 
 // DebugQueries define the debug
@@ -96,6 +96,7 @@ type orm struct {
 	db    dbQuerier
 	isTx  bool
 	span opentracing.Span
+	data map[string]string
 }
 
 var _ Ormer = new(orm)
@@ -528,11 +529,32 @@ func (o *orm) Driver() Driver {
 	return driver(o.alias.Name)
 }
 
+func (o *orm) SetData(key string, value string) {
+	o.data[key] = value
+}
+
+func (o *orm) GetData(key string) string {
+	if value, ok := o.data[key]; ok {
+		return value
+	} else {
+		return ""
+	}
+}
+
+func (o *orm) CopyDataTo(otherO Ormer) {
+	if o.data != nil {
+		for key, value := range o.data {
+			otherO.SetData(key, value)
+		}
+	}
+}
+
 // NewOrm create new orm
 func NewOrm() Ormer {
 	BootStrap() // execute only once
 
 	o := new(orm)
+	o.data = make(map[string]string)
 	err := o.Using("default")
 	if err != nil {
 		panic(err)
@@ -544,6 +566,7 @@ func NewOrmWithSpan(span opentracing.Span) Ormer {
 	BootStrap() // execute only once
 	
 	o := new(orm)
+	o.data = make(map[string]string)
 	o.span = span
 	err := o.Using("default")
 	if err != nil {
@@ -571,6 +594,7 @@ func NewOrmWithDB(driverName, aliasName string, db *sql.DB) (Ormer, error) {
 	detectTZ(al)
 
 	o := new(orm)
+	o.data = make(map[string]string)
 	o.alias = al
 
 	if Debug {

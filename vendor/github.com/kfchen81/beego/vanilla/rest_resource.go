@@ -7,15 +7,15 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-
+	
 	"github.com/kfchen81/beego"
-
+	
 	"encoding/json"
 	"github.com/bitly/go-simplejson"
+	"github.com/go-redsync/redsync"
 	beego_context "github.com/kfchen81/beego/context"
 	"github.com/kfchen81/beego/orm"
 	"github.com/opentracing/opentracing-go"
-	"github.com/go-redsync/redsync"
 )
 
 var emptyStringArray = make([]string, 0)
@@ -217,6 +217,34 @@ func (r *RestResource) Prepare() {
 	if app, ok := r.AppController.(RestResourceInterface); ok {
 		//记录counter
 		metrics.GetEndpointCounter().WithLabelValues(app.Resource(), method).Inc()
+		source := r.Input().Get("__source_service")
+		if source == "" {
+			source = r.Input().Get("__source")
+		}
+		metrics.GetEndpointCallByServiceCounter().WithLabelValues(app.Resource(), method, source).Inc()
+		
+		// 记录local resource
+		{
+			v := r.Ctx.Input.GetData("bContext")
+			switch v.(type) {
+			case context.Context:
+				bCtx := v.(context.Context)
+				bCtx = context.WithValue(bCtx, "SOURCE_RESOURCE", app.Resource())
+				bCtx = context.WithValue(bCtx, "SOURCE_METHOD", method)
+				r.Ctx.Input.SetData("bContext", bCtx)
+				
+				o := bCtx.Value("orm")
+				switch o.(type) {
+				case orm.Ormer:
+					ormer := o.(orm.Ormer)
+					ormer.SetData("SOURCE_RESOURCE", app.Resource())
+					ormer.SetData("SOURCE_METHOD", method)
+				}
+			default:
+				beego.Warn("no business context")
+			}
+		}
+		
 		
 		method2parameters := app.GetParameters()
 		if method2parameters != nil {

@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"runtime/debug"
 	"strings"
-	"time"
 	
 	"os"
 )
@@ -57,10 +56,12 @@ func CaptureErrorToSentry(ctx *context.Context, err string) {
 	
 	select {
 	case sentryChannel <- data:
-	
-	case <-time.After(time.Millisecond * SENTRY_CHANNEL_TIMEOUT):
+	default:
 		metrics.GetSentryChannelTimeoutCounter().Inc()
 		Warn("[sentry] push timeout")
+	//case <-time.After(time.Millisecond * SENTRY_CHANNEL_TIMEOUT):
+	//	metrics.GetSentryChannelTimeoutCounter().Inc()
+	//	Warn("[sentry] push timeout")
 	}
 	
 }
@@ -83,7 +84,7 @@ func CaptureTaskErrorToSentry(ctx go_context.Context, errMsg string) {
 	select {
 	case sentryChannel <- data:
 	
-	case <-time.After(time.Millisecond * SENTRY_CHANNEL_TIMEOUT):
+	default:
 		metrics.GetSentryChannelTimeoutCounter().Inc()
 		Warn("[sentry] push timeout")
 	}
@@ -107,7 +108,7 @@ func PushErrorToSentry(errMsg string, req *http.Request) {
 	select {
 	case sentryChannel <- data:
 	
-	case <-time.After(time.Millisecond * SENTRY_CHANNEL_TIMEOUT):
+	default:
 		metrics.GetSentryChannelTimeoutCounter().Inc()
 		Warn("[sentry] push timeout")
 	}
@@ -132,7 +133,7 @@ func PushErrorWithExtraDataToSentry(errMsg string, extra map[string]interface{},
 	select {
 	case sentryChannel <- data:
 	
-	case <-time.After(time.Millisecond * SENTRY_CHANNEL_TIMEOUT):
+	default:
 		metrics.GetSentryChannelTimeoutCounter().Inc()
 		Warn("[sentry] push timeout")
 	}

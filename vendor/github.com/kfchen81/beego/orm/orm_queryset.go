@@ -17,7 +17,12 @@ package orm
 import (
 	"context"
 	"fmt"
+	"github.com/kfchen81/beego"
+	"github.com/kfchen81/beego/metrics"
 )
+
+var _ENABLE_DB_ACCESS_TRACE bool = false
+var _ENABLE_DB_READ_CHECK bool = false
 
 type colValue struct {
 	value int64
@@ -207,24 +212,37 @@ func (o querySet) GetCond() *Condition {
 	return o.cond
 }
 
+func (o querySet) recordMetrics (dbMethod string) {
+	if _ENABLE_DB_ACCESS_TRACE {
+		localResource := o.orm.GetData("SOURCE_RESOURCE")
+		localMethod := o.orm.GetData("SOURCE_METHOD")
+		dbType := o.orm.alias.Name
+		metrics.GetDBTableAccessCounter().WithLabelValues(localMethod, localResource, dbType, dbMethod, o.mi.table).Inc()
+	}
+}
+
 // return QuerySeter execution result number
 func (o *querySet) Count() (int64, error) {
+	o.recordMetrics("COUNT")
 	return o.orm.alias.DbBaser.Count(o.orm.db, o, o.mi, o.cond, o.orm.alias.TZ)
 }
 
 // check result empty or not after QuerySeter executed
 func (o *querySet) Exist() bool {
+	o.recordMetrics("COUNT")
 	cnt, _ := o.orm.alias.DbBaser.Count(o.orm.db, o, o.mi, o.cond, o.orm.alias.TZ)
 	return cnt > 0
 }
 
 // execute update with parameters
 func (o *querySet) Update(values Params) (int64, error) {
+	o.recordMetrics("UPDATE")
 	return o.orm.alias.DbBaser.UpdateBatch(o.orm.db, o, o.mi, o.cond, values, o.orm.alias.TZ)
 }
 
 // execute delete
 func (o *querySet) Delete() (int64, error) {
+	o.recordMetrics("DELETE")
 	return o.orm.alias.DbBaser.DeleteBatch(o.orm.db, o, o.mi, o.cond, o.orm.alias.TZ)
 }
 
@@ -240,12 +258,14 @@ func (o *querySet) PrepareInsert() (Inserter, error) {
 // query all data and map to containers.
 // cols means the columns when querying.
 func (o *querySet) All(container interface{}, cols ...string) (int64, error) {
+	o.recordMetrics("SELECT")
 	return o.orm.alias.DbBaser.ReadBatch(o.orm.db, o, o.mi, o.cond, container, o.orm.alias.TZ, cols)
 }
 
 // query one row data and map to containers.
 // cols means the columns when querying.
 func (o *querySet) One(container interface{}, cols ...string) error {
+	o.recordMetrics("SELECT")
 	o.limit = 1
 	num, err := o.orm.alias.DbBaser.ReadBatch(o.orm.db, o, o.mi, o.cond, container, o.orm.alias.TZ, cols)
 	if err != nil {
@@ -321,4 +341,12 @@ func newQuerySet(orm *orm, mi *modelInfo) QuerySeter {
 	o.mi = mi
 	o.orm = orm
 	return o
+}
+
+
+func init() {
+	_ENABLE_DB_ACCESS_TRACE = beego.AppConfig.DefaultBool("system::ENABLE_DB_ACCESS_TRACE", false)
+	beego.Info("[init] use _ENABLE_DB_ACCESS_TRACE: ", _ENABLE_DB_ACCESS_TRACE)
+	_ENABLE_DB_READ_CHECK = beego.AppConfig.DefaultBool("system::ENABLE_DB_READ_CHECK", false)
+	beego.Info("[init] use _ENABLE_DB_READ_CHECK: ", _ENABLE_DB_READ_CHECK)
 }

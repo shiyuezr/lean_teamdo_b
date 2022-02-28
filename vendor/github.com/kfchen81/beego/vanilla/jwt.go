@@ -49,7 +49,6 @@ func DecodeJWT(jwtToken string) (*simplejson.Json, error){
 	h := hmac.New(sha256.New, []byte(SALT))
 	h.Write([]byte(message))
 	actualSignature := base64.StdEncoding.EncodeToString(h.Sum(nil))
-
 	if expectedSignature != actualSignature {
 		//jwt token的signature不匹配
 		return js, errors.New(fmt.Sprintf("无效的jwt token 2 - [%s]", jwtToken))

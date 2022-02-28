@@ -7,12 +7,45 @@ import (
 	_ "github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
+var startServiceCounter = promauto.NewCounterVec(prometheus.CounterOpts{
+	Name: "a_service_start",
+	Help: "service start info",
+},
+	[]string{"time"},
+)
+
 var endpointCounter = promauto.NewCounterVec(prometheus.CounterOpts{
 	Name: "endpoint_call_total",
 	Help: "total counts for panic",
 },
 	[]string{"endpoint", "method"},
 )
+
+var endpointCallByServiceCounter = promauto.NewCounterVec(prometheus.CounterOpts{
+	Name: "endpoint_call_by_service_total",
+	Help: "total counts for endpoint call by service",
+},
+	[]string{"endpoint", "method", "service"},
+)
+
+var remoteEndpointCallCounter = promauto.NewCounterVec(prometheus.CounterOpts{
+		Name: "remote_endpoint_call_total",
+		Help: "total counts for remote endpoint call",
+	},
+	[]string{"local_method", "local_resource", "remote_method", "remote_service", "remote_endpoint"},
+)
+
+var dbTableAccessCounter = promauto.NewCounterVec(prometheus.CounterOpts{
+	Name: "db_table_access_total",
+	Help: "total counts for db table access",
+},
+	[]string{"local_method", "local_resource", "db_type", "db_method", "db_table"},
+)
+
+var dbReadBatchGauge = promauto.NewGaugeVec(prometheus.GaugeOpts{
+	Name: "read_batch_gauge",
+	Help: "read batch gauge",
+}, []string{"metric"})
 
 /*
 var endpointSummary = promauto.NewSummaryVec(
@@ -159,12 +192,32 @@ func GetRestwsGauge() prometheus.Gauge {
 	return restwsGauge
 }
 
+func GetStartServiceCounter() *prometheus.CounterVec {
+	return startServiceCounter
+}
+
 func GetRestwsErrorCounter() *prometheus.CounterVec {
 	return restwsErrorCounter
 }
 
 func GetEndpointCounter() *prometheus.CounterVec {
 	return endpointCounter
+}
+
+func GetEndpointCallByServiceCounter() *prometheus.CounterVec {
+	return endpointCallByServiceCounter
+}
+
+func GetRemoteEndpointCallCounter() *prometheus.CounterVec {
+	return remoteEndpointCallCounter
+}
+
+func GetDBTableAccessCounter() *prometheus.CounterVec {
+	return dbTableAccessCounter
+}
+
+func GetDBReadBatchGauge () *prometheus.GaugeVec {
+	return dbReadBatchGauge
 }
 
 func GetEndpointSummary() *prometheus.SummaryVec {

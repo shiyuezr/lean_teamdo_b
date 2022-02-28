@@ -118,6 +118,7 @@ func writer(ws *websocket.Conn, respChan <-chan WsResponse, stopRespCh chan stru
 		}
 	}()
 	defer func() {
+		metrics.GetRestwsErrorCounter().WithLabelValues("writer_close").Inc()
 		close(stopRespCh)
 		ws.Close()
 	}()

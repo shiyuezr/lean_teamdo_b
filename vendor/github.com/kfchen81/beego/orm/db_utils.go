@@ -148,8 +148,13 @@ outFor:
 				params = append(params, p...)
 				continue outFor
 			}else{
-				arg = -98765
+				arg = nil //-98765
 			}
+			//if len(args) > 0 {
+			//	p := getFlatParams(fi, args, tz)
+			//	params = append(params, p...)
+			//}
+			//continue outFor
 		case reflect.Struct:
 			if v, ok := arg.(time.Time); ok {
 				if fi != nil && fi.fieldType == TypeDateField {

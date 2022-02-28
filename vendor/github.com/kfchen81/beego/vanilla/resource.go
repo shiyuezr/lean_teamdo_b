@@ -25,6 +25,7 @@ import (
 var _PLATFORM_SECRET string
 var _USER_LOGIN_SECRET string
 var _ENABLE_RESOURCE_LOGIN_CACHE bool
+var _ENABLE_REOURCE_CALL_TRACE bool
 
 const _RETRY_COUNT = 3
 var _SERVICE_NAME string
@@ -125,6 +126,24 @@ func (this *Resource) request(method string, service string, resource string, da
 		
 		} else {
 			jwtToken = ""
+		}
+	}
+	
+	if _ENABLE_REOURCE_CALL_TRACE {
+		localResource := this.Ctx.Value("SOURCE_RESOURCE")
+		localMethod := this.Ctx.Value("SOURCE_METHOD")
+		strLocalMethod := ""
+		switch localMethod.(type) {
+		case string:
+			strLocalMethod = localMethod.(string)
+		}
+		
+		switch localResource.(type) {
+		case string:
+			remoteResource := resource
+			metrics.GetRemoteEndpointCallCounter().WithLabelValues(strLocalMethod, localResource.(string), method, service, remoteResource).Inc()
+		default:
+			beego.Warn("no SOURCE_RESOURCE")
 		}
 	}
 	
@@ -505,10 +524,12 @@ func init() {
 	_SERVICE_NAME = beego.AppConfig.String("appname")
 	_ENABLE_RESOURCE_LOGIN_CACHE = beego.AppConfig.DefaultBool("system::ENABLE_RESOURCE_LOGIN_CACHE", true)
 	_RESOURCE_LOGIN_CACHE_SIZE = beego.AppConfig.DefaultInt("system::RESOURCE_LOGIN_CACHE_SIZE", 100)
+	_ENABLE_REOURCE_CALL_TRACE = beego.AppConfig.DefaultBool("system::ENABLE_REOURCE_CALL_TRACE", false)
 	beego.Info("[init] use _PLATFORM_SECRET: ", _PLATFORM_SECRET)
 	beego.Info("[init] use _USER_LOGIN_SECRET: ", _USER_LOGIN_SECRET)
 	beego.Info("[init] use _ENABLE_RESOURCE_LOGIN_CACHE: ", _ENABLE_RESOURCE_LOGIN_CACHE)
 	beego.Info("[init] use _RESOURCE_LOGIN_CACHE_SIZE: ", _RESOURCE_LOGIN_CACHE_SIZE)
+	beego.Info("[init] use _ENABLE_REOURCE_CALL_TRACE: ", _ENABLE_REOURCE_CALL_TRACE)
 	
 	_HTTP_DIAL_TIMEOUT = beego.AppConfig.DefaultInt("httpclient::DIAL_TIMEOUT", 5)
 	_HTTP_DIAL_KEEPALIVE = beego.AppConfig.DefaultInt("httpclient::DIAL_KEEPALIVE", 60)

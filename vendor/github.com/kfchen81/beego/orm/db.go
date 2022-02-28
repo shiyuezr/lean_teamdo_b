@@ -18,6 +18,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/kfchen81/beego/metrics"
 	"reflect"
 	"strings"
 	"time"
@@ -896,9 +897,60 @@ func (d *dbBase) DeleteBatch(q dbQuerier, qs *querySet, mi *modelInfo, cond *Con
 	return 0, err
 }
 
+// 是否存在`in []`这样的查询条件
+func (d *dbBase) hasInOperatorWithEmptyList(cond *Condition) bool {
+	if !_ENABLE_DB_READ_CHECK {
+		return false
+	}
+	
+	for _, param := range cond.params {
+		exprs := param.exprs
+		if len(exprs) == 2 && strings.ToLower(exprs[1]) == "in" {
+			args := param.args
+			if len(args) > 0 {
+				firstArg := args[0]
+				switch firstArg.(type) {
+				case []string:
+					datas := firstArg.([]string)
+					if len(datas) == 0 {
+						return true
+					}
+				case []int:
+					datas := firstArg.([]int)
+					if len(datas) == 0{
+						return true
+					}
+				case []int64:
+					datas := firstArg.([]int64)
+					if len(datas) == 0{
+						return true
+					}
+				case []float32:
+					datas := firstArg.([]float32)
+					if len(datas) == 0{
+						return true
+					}
+				case []float64:
+					datas := firstArg.([]float64)
+					if len(datas) == 0{
+						return true
+					}
+				}
+			}
+		}
+	}
+	
+	return false
+}
+
 // read related records.
 func (d *dbBase) ReadBatch(q dbQuerier, qs *querySet, mi *modelInfo, cond *Condition, container interface{}, tz *time.Location, cols []string) (int64, error) {
-
+	metrics.GetDBReadBatchGauge().WithLabelValues("read_batch").Inc()
+	if d.hasInOperatorWithEmptyList(cond){
+		metrics.GetDBReadBatchGauge().WithLabelValues("read_batch_empty_in").Inc()
+		return 0, nil // return because `in []`
+	}
+	
 	val := reflect.ValueOf(container)
 	ind := reflect.Indirect(val)
 
@@ -1124,6 +1176,12 @@ func (d *dbBase) ReadBatch(q dbQuerier, qs *querySet, mi *modelInfo, cond *Condi
 
 // excute count sql and return count result int64.
 func (d *dbBase) Count(q dbQuerier, qs *querySet, mi *modelInfo, cond *Condition, tz *time.Location) (cnt int64, err error) {
+	metrics.GetDBReadBatchGauge().WithLabelValues("count").Inc()
+	if d.hasInOperatorWithEmptyList(cond){
+		metrics.GetDBReadBatchGauge().WithLabelValues("count_empty_in").Inc()
+		return 0, nil // return because `in []`
+	}
+	
 	tables := newDbTables(mi, d.ins)
 	tables.parseRelated(qs.related, qs.relDepth)
 

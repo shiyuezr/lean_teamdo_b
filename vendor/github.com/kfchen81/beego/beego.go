@@ -15,10 +15,14 @@
 package beego
 
 import (
+	"github.com/kfchen81/beego/metrics"
+	"math/rand"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
+	"fmt"
 )
 
 const (
@@ -54,6 +58,10 @@ func AddAPPStartHook(hf ...hookfunc) {
 // beego.Run(":8089")
 // beego.Run("127.0.0.1:8089")
 func Run(params ...string) {
+	// 记录服务启动时间
+	rand.Seed(time.Now().UnixNano())
+	startTime := fmt.Sprintf("%s %d", time.Now().Format("2006-01-02 15:04:05"), rand.Intn(10000000))
+	metrics.GetStartServiceCounter().WithLabelValues(startTime).Inc()
 
 	initBeforeHTTPRun()
 
@@ -74,6 +82,11 @@ func Run(params ...string) {
 
 // RunWithMiddleWares Run beego application with middlewares.
 func RunWithMiddleWares(addr string, mws ...MiddleWare) {
+	// 记录服务启动时间
+	rand.Seed(time.Now().UnixNano())
+	startTime := fmt.Sprintf("%s %d", time.Now().Format("2006-01-02 15:04:05"), rand.Intn(10000000))
+	metrics.GetStartServiceCounter().WithLabelValues(startTime).Inc()
+	
 	initBeforeHTTPRun()
 
 	strs := strings.Split(addr, ":")

@@ -5,7 +5,10 @@ import (
 	"github.com/kfchen81/beego/orm"
 
 	"fmt"
-
+	_ "teamdo/models/user"
+	_ "teamdo/models/project_member"
+	_ "teamdo/models/project"
+	_ "teamdo/models/lane"
 	_ "github.com/go-sql-driver/mysql"
 )
 
